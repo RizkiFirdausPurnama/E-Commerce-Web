@@ -7,7 +7,6 @@ const [products, setProducts] = useState([]);
 
   // Mengambil data dari Backend saat halaman dibuka
 useEffect(() => {
-    // Pastikan Laravel sudah jalan di port 8000
     axios.get('http://127.0.0.1:8000/api/products?limit=4')
     .then(res => {
         setProducts(res.data);
@@ -17,7 +16,7 @@ useEffect(() => {
 
 return (
     <div className="pb-20">
-      {/* 1. HERO SECTION (Banner Utama) */}
+      {/* 1. HERO SECTION */}
     <header className="bg-[#F2F0F1] pt-10 md:pt-20 px-6 md:px-10 flex flex-col md:flex-row items-center justify-between overflow-hidden">
         <div className="md:w-1/2 space-y-6 z-10 pb-10">
         <h1 className="text-4xl md:text-6xl font-black leading-tight font-sans uppercase">
@@ -29,7 +28,6 @@ return (
         <button className="bg-black text-white px-10 md:px-16 py-4 rounded-full text-lg mt-4 hover:bg-gray-800 transition">
             Shop Now
         </button>
-        
         <div className="flex space-x-6 md:space-x-8 mt-8">
             <div><h3 className="text-2xl font-bold">200+</h3><p className="text-xs text-gray-500">Intl Brands</p></div>
             <div><h3 className="text-2xl font-bold">2,000+</h3><p className="text-xs text-gray-500">Quality Products</p></div>
@@ -37,20 +35,18 @@ return (
         </div>
         </div>
         
-        {/* Gambar Hero (Placeholder Sementara) */}
         <div className="md:w-1/2 relative flex justify-center items-end h-full">
             <img 
             src="https://placehold.co/600x600/png?text=Model+Fashion" 
             alt="Fashion Models" 
             className="object-cover h-[400px] md:h-[600px] w-full mix-blend-multiply" 
             />
-            {/* Hiasan Bintang (Star) */}
             <span className="absolute top-10 right-10 text-4xl">✦</span>
             <span className="absolute top-1/2 left-10 text-2xl">✦</span>
         </div>
     </header>
 
-      {/* 2. BRAND BANNER (Hitam) */}
+      {/* 2. BRAND BANNER */}
     <div className="bg-black py-8 flex flex-wrap justify-center gap-8 md:gap-16 px-4">
         <span className="text-white text-2xl font-serif">VERSACE</span>
         <span className="text-white text-2xl font-serif">ZARA</span>
@@ -59,11 +55,10 @@ return (
         <span className="text-white text-2xl font-serif">Calvin Klein</span>
     </div>
 
-      {/* 3. NEW ARRIVALS (Data dari Laravel) */}
+      {/* 3. NEW ARRIVALS */}
     <section className="px-6 md:px-10 py-16 text-center">
         <h2 className="text-3xl md:text-5xl font-black mb-12 uppercase font-sans">New Arrivals</h2>
         
-        {/* Grid Produk */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {products.map(product => (
             <Link to={`/product/${product.slug}`} key={product.id} className="text-left group cursor-pointer">
@@ -101,6 +96,51 @@ return (
             </button>
         </div>
     </section>
+
+      {/* 4. BROWSE BY CATEGORY (Update: Pria, Wanita, Anak-anak) */}
+    <section className="px-6 md:px-10 py-10">
+        <div className="bg-[#F0F0F0] rounded-[40px] px-6 md:px-16 py-10 md:py-16">
+            <h2 className="text-3xl md:text-5xl font-black text-center mb-10 md:mb-16 uppercase font-sans">
+                BROWSE BY CATEGORY
+            </h2>
+            
+            {/* Grid Layout 3 Kolom */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* 1. PRIA */}
+                <Link to="/category/pria" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                    <h3 className="text-3xl font-black z-10 relative">Pria</h3>
+                    <img 
+                        src="https://images.unsplash.com/photo-1488161628813-99425205fdd4?auto=format&fit=crop&w=600&q=80" 
+                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                        alt="Pria" 
+                    />
+                </Link>
+
+                {/* 2. WANITA */}
+                <Link to="/category/wanita" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                    <h3 className="text-3xl font-black z-10 relative">Wanita</h3>
+                    <img 
+                        src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80" 
+                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                        alt="Wanita" 
+                    />
+                </Link>
+
+                {/* 3. ANAK-ANAK */}
+                <Link to="/category/anak-anak" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                    <h3 className="text-3xl font-black z-10 relative">Anak-anak</h3>
+                    <img 
+                        src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=600&q=80" 
+                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                        alt="Anak-anak" 
+                    />
+                </Link>
+
+            </div>
+        </div>
+    </section>
+
     </div>
 );
 };
