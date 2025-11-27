@@ -37,7 +37,7 @@ return (
         
         <div className="md:w-1/2 relative flex justify-center items-end h-full">
             <img 
-            src="https://placehold.co/600x600/png?text=Model+Fashion" 
+            src="https://i.pinimg.com/736x/18/a6/86/18a6862710797a4e426842e7fa38c1a3.jpg" 
             alt="Fashion Models" 
             className="object-cover h-[400px] md:h-[600px] w-full mix-blend-multiply" 
             />
@@ -109,9 +109,9 @@ return (
                 
                 {/* 1. PRIA */}
                 <Link to="/category/pria" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative">Pria</h3>
+                    <h3 className="text-3xl font-black z-10 relative">Men</h3>
                     <img 
-                        src="https://images.unsplash.com/photo-1488161628813-99425205fdd4?auto=format&fit=crop&w=600&q=80" 
+                        src="https://static.zara.net/assets/public/68f0/6649/f9cc45c1a9dc/034ca7bcbff5/00706102400-p/00706102400-p.jpg?ts=1757318854477&w=1024" 
                         className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
                         alt="Pria" 
                     />
@@ -119,9 +119,9 @@ return (
 
                 {/* 2. WANITA */}
                 <Link to="/category/wanita" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative">Wanita</h3>
+                    <h3 className="text-3xl font-black z-10 relative">Women</h3>
                     <img 
-                        src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80" 
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnJglg7TofRh4g_uIFJUzQ3229OqBBVNzTk29dTFLhJQ&s" 
                         className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
                         alt="Wanita" 
                     />
@@ -129,9 +129,9 @@ return (
 
                 {/* 3. ANAK-ANAK */}
                 <Link to="/category/anak-anak" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative">Anak-anak</h3>
+                    <h3 className="text-3xl font-black z-10 relative">Kids</h3>
                     <img 
-                        src="https://images.unsplash.com/photo-1519457431-44ccd64a579b?auto=format&fit=crop&w=600&q=80" 
+                        src="https://whiteretouch-b4f9.kxcdn.com/wp-content/uploads/2020/04/ZARA_KIDS_1.jpg" 
                         className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
                         alt="Anak-anak" 
                     />

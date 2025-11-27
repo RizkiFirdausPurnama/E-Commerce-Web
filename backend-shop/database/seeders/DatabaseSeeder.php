@@ -17,22 +17,22 @@ class DatabaseSeeder extends Seeder
         // ==========================================
         
         // Gambar Kategori (Thumbnail)
-        $img_cat_pria   = 'https://placehold.co/200x200/png?text=Men';
-        $img_cat_wanita = 'https://placehold.co/200x200/png?text=Women';
-        $img_cat_anak   = 'https://placehold.co/200x200/png?text=Kids';
+        $img_cat_pria   = 'https://static.zara.net/assets/public/68f0/6649/f9cc45c1a9dc/034ca7bcbff5/00706102400-p/00706102400-p.jpg?ts=1757318854477&w=1024';
+        $img_cat_wanita = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnJglg7TofRh4g_uIFJUzQ3229OqBBVNzTk29dTFLhJQ&s';
+        $img_cat_anak   = 'https://whiteretouch-b4f9.kxcdn.com/wp-content/uploads/2020/04/ZARA_KIDS_1.jpg';
 
         // 1. T-shirt with Tape Details (Hitam)
         $img_shirt1_depan  = 'https://static.zara.net/assets/public/a32a/2eb7/c3414781aeeb/63c99399f422/03992405800-p/03992405800-p.jpg?ts=1736866610191&w=1024'; 
         $img_shirt1_detail = 'https://placehold.co/600x600/333/white?text=Detail+1';
 
         // 2. Skinny Fit Jeans (Biru)
-        $img_jeans1 = 'https://placehold.co/600x600/blue/white?text=Jeans+Blue';
+        $img_jeans1 = 'https://static.zara.net/assets/public/da36/004b/fcb8481e9242/4376db0fd458/04806330822-p/04806330822-p.jpg?ts=1755612663575&w=1024';
 
         // 3. Checkered Shirt (Merah Kotak-kotak)
-        $img_shirt2 = 'https://placehold.co/600x600/red/white?text=Checkered+Shirt';
+        $img_shirt2 = 'https://static.zara.net/assets/public/4748/f4a7/287041589b10/44630a5e4699/03183711600-e1/03183711600-e1.jpg?ts=1756742037871&w=1024';
 
         // 4. Gradient Graphic T-shirt (Putih Corak)
-        $img_shirt3 = 'https://placehold.co/600x600/white/black?text=Gradient+Tee';
+        $img_shirt3 = 'https://static.zara.net/assets/public/4734/0d1f/e4db4faab952/729bb8ddbfa8/06224855711-e1/06224855711-e1.jpg?ts=1762863985620&w=744&f=auto';
 
         // ==========================================
         //  AKHIR AREA GANTI GAMBAR
