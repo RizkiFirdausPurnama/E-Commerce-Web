@@ -15,3 +15,7 @@ Route::get('/cart/{sessionId}', [CartController::class, 'index']);
 Route::post('/cart', [CartController::class, 'store']);
 Route::put('/cart/{id}', [CartController::class, 'update']); // Perhatikan parameter {id} adalah ID item keranjang
 Route::delete('/cart/{id}', [CartController::class, 'destroy']);
+
+use App\Http\Controllers\OrderController;
+
+Route::post('/checkout', [OrderController::class, 'checkout']);

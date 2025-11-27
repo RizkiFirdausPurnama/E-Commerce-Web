@@ -2,12 +2,13 @@ import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { FiTrash2, FiMinus, FiPlus } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const { sessionId, fetchCart } = useContext(CartContext);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     // Ambil data keranjang saat halaman dibuka
     useEffect(() => {
@@ -65,6 +66,24 @@ const Cart = () => {
             </div>
         );
     }
+
+    const handleCheckout = async () => {
+        try {
+            const res = await axios.post('http://127.0.0.1:8000/api/checkout', {
+                session_id: sessionId
+            });
+
+            // Refresh Cart Context (agar navbar jadi 0)
+            fetchCart();
+            
+            // Pindah ke halaman Sukses bawa nomor Order
+            navigate('/success', { state: { orderNumber: res.data.order_number } });
+            
+        } catch (err) {
+            console.error(err);
+            alert("Checkout Failed. Please try again.");
+        }
+    };
 
     return (
         <div className="px-6 md:px-10 py-10 max-w-7xl mx-auto">
@@ -139,7 +158,9 @@ const Cart = () => {
                             <span>${(totalPrice + 15).toFixed(2)}</span>
                         </div>
                         
-                        <button className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
+                        <button 
+                        onClick={handleCheckout}  // <--- TAMBAHKAN BARIS INI!
+                        className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2">
                             Go to Checkout <span className="text-lg">→</span>
                         </button>
                     </div>

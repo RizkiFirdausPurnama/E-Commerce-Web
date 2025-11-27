@@ -6,6 +6,7 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import CategoryPage from './pages/CategoryPage'; // <--- 1. Import ini
 import { CartProvider } from './context/CartContext';
+import Success from './pages/Success';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
-          
+          <Route path="/success" element={<Success />} />
           {/* 2. Tambahkan Route Kategori di bawah ini */}
           <Route path="/category/:slug" element={<CategoryPage />} />
           
