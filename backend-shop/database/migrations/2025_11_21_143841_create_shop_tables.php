@@ -11,7 +11,7 @@ return new class extends Migration
         // 1. Tabel Kategori
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->enum('name', ['Pria', 'Wanita', 'Anak-anak']);
+            $table->string('name');
             $table->string('slug')->unique();
             $table->string('thumbnail_url')->nullable();
             $table->timestamps();

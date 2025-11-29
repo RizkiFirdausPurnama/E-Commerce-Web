@@ -8,6 +8,7 @@ import CategoryPage from './pages/CategoryPage'; // <--- 1. Import ini
 import { CartProvider } from './context/CartContext';
 import Success from './pages/Success';
 
+
 function App() {
   return (
     <CartProvider>
