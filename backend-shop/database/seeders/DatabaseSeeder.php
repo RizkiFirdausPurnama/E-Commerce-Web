@@ -36,10 +36,10 @@ class DatabaseSeeder extends Seeder
         $img_shirt3 = 'https://static.zara.net/assets/public/4734/0d1f/e4db4faab952/729bb8ddbfa8/06224855711-e1/06224855711-e1.jpg?ts=1762863985620&w=744&f=auto';
 
         // --- PRODUK BARU (Masih Placeholder, Silakan ganti linknya nanti) ---
-        $img_polo   = 'https://placehold.co/600x600/green/white?text=Polo+Shirt';
-        $img_dress  = 'https://placehold.co/600x600/pink/white?text=Party+Dress';
-        $img_hoodie = 'https://placehold.co/600x600/orange/white?text=Kids+Hoodie';
-        $img_shorts = 'https://placehold.co/600x600/navy/white?text=Kids+Shorts';
+        $img_polo   = 'https://i.pinimg.com/736x/ad/81/4c/ad814c61731543f7ee96feabbf5a1fa0.jpg';
+        $img_dress  = 'https://i.pinimg.com/736x/c1/69/e7/c169e7b8318c2378778222c02043b749.jpg';
+        $img_hoodie = 'https://i.pinimg.com/1200x/7c/fa/39/7cfa39a2f77804d8860949b72fc274ab.jpg';
+        $img_shorts = 'https://i.pinimg.com/1200x/2d/e2/bd/2de2bdb95b864ff870386bb620084cab.jpg';
 
 
         // ==========================================
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             'review_count' => 5
         ]);
         ProductImage::create(['product_id' => $p2->id, 'image_url' => $img_jeans1, 'is_primary' => true]);
-        ProductVariant::create(['product_id' => $p2->id, 'color_name' => 'Blue', 'color_hex' => '#0000FF', 'size' => '32', 'stock_quantity' => 20]);
+        ProductVariant::create(['product_id' => $p2->id, 'color_name' => 'Blue', 'color_hex' => '#98D8EF', 'size' => '32', 'stock_quantity' => 20]);
 
         // --- PRODUK 3: Checkered Shirt (Men) ---
         $p3 = Product::create([
@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
             'review_count' => 15
         ]);
         ProductImage::create(['product_id' => $p5->id, 'image_url' => $img_polo, 'is_primary' => true]);
-        ProductVariant::create(['product_id' => $p5->id, 'color_name' => 'Green', 'color_hex' => '#008000', 'size' => 'L', 'stock_quantity' => 25]);
+        ProductVariant::create(['product_id' => $p5->id, 'color_name' => 'Green', 'color_hex' => '#FAF1E6', 'size' => 'L', 'stock_quantity' => 25]);
 
         // --- PRODUK 6 (BARU): Elegant Party Dress (Women) ---
         $p6 = Product::create([
@@ -159,6 +159,6 @@ class DatabaseSeeder extends Seeder
             'review_count' => 18
         ]);
         ProductImage::create(['product_id' => $p8->id, 'image_url' => $img_shorts, 'is_primary' => true]);
-        ProductVariant::create(['product_id' => $p8->id, 'color_name' => 'Navy', 'color_hex' => '#000080', 'size' => 'M', 'stock_quantity' => 60]);
+        ProductVariant::create(['product_id' => $p8->id, 'color_name' => 'Navy', 'color_hex' => '#9CC6DB', 'size' => 'M', 'stock_quantity' => 60]);
     }
 }

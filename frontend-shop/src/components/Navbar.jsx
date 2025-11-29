@@ -1,11 +1,27 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch, FiShoppingCart, FiUser, FiMenu } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
 
 const Navbar = () => {
 const { cartCount } = useContext(CartContext);
 const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+const navigate = useNavigate();
+const location = useLocation();
+
+const handleScrollToNewArrivals = () => {
+    if (location.pathname === '/') {
+        // Jika sedang di Home, langsung scroll
+        const element = document.getElementById('new-arrivals');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    } else {
+        // Jika di halaman lain, pindah ke Home sambil bawa pesan "tolong scroll"
+        navigate('/', { state: { scrollTo: 'new-arrivals' } });
+    }
+};
 
 return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -20,7 +36,12 @@ return (
         <div className="hidden md:flex items-center space-x-6 text-base font-medium">
         <Link to="/" className="hover:underline">Shop</Link>
         <Link to="/" className="hover:underline">On Sale</Link>
-        <Link to="/" className="hover:underline">New Arrivals</Link>
+        <button 
+            onClick={handleScrollToNewArrivals} 
+            className="hover:underline font-medium"
+        >
+            New Arrivals
+        </button>
         <Link to="/" className="hover:underline">Brands</Link>
         </div>
 
