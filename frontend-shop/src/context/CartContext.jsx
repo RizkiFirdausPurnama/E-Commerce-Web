@@ -40,7 +40,7 @@ useEffect(() => {
   // 3. Fungsi Tambah ke Keranjang
 const addToCart = async (variantId, qty) => {
     try {
-    await axios.post('http://127.0.0.1:8000/api/cart', {
+    await axios.post(`${apiUrl}/cart`, {
         session_id: sessionId,
         product_variant_id: variantId,
         quantity: qty
