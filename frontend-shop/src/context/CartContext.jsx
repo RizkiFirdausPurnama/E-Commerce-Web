@@ -6,6 +6,8 @@ export const CartContext = createContext();
 export const CartProvider = ({ children }) => {
 const [cartCount, setCartCount] = useState(0);
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
   // 1. Buat/Ambil Session ID (Agar keranjang tidak hilang saat di-refresh)
   // Kita simpan ID unik di LocalStorage browser
 const getSessionId = () => {
@@ -22,8 +24,7 @@ const sessionId = getSessionId();
   // 2. Fungsi Ambil Data Keranjang dari Database
 const fetchCart = async () => {
     try {
-    const res = await axios.get(`http://127.0.0.1:8000/api/cart/${sessionId}`);
-      // Hitung total item (misal: beli 2 baju + 1 celana = 3 item)
+    const res = await axios.get(`${apiUrl}/cart/${sessionId}`);
     const totalItems = res.data.reduce((acc, item) => acc + item.quantity, 0);
     setCartCount(totalItems);
     } catch (err) {

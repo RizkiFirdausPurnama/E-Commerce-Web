@@ -7,6 +7,8 @@ const CategoryPage = () => {
 const [products, setProducts] = useState([]);
 const [loading, setLoading] = useState(true);
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 useEffect(() => {
     // Reset state saat kategori berubah
     setLoading(true);
@@ -14,7 +16,7 @@ useEffect(() => {
 
     // Panggil API Backend dengan filter kategori
     // Contoh: http://127.0.0.1:8000/api/products?category=pria
-    axios.get(`http://127.0.0.1:8000/api/products?category=${slug}`)
+    axios.get(`${apiUrl}/products?category=${slug}`)
     .then(res => {
         setProducts(res.data);
         setLoading(false);

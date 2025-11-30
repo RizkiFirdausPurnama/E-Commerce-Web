@@ -10,13 +10,15 @@ const Cart = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
     // Ambil data keranjang saat halaman dibuka
     useEffect(() => {
         getCartData();
     }, []);
 
     const getCartData = () => {
-        axios.get(`http://127.0.0.1:8000/api/cart/${sessionId}`)
+        axios.get(`${apiUrl}/cart/${sessionId}`)
             .then(res => {
                 setCartItems(res.data);
                 setLoading(false);
@@ -31,7 +33,7 @@ const Cart = () => {
     const updateQty = async (itemId, newQty) => {
         if(newQty < 1) return; // Minimal 1
         try {
-            await axios.put(`http://127.0.0.1:8000/api/cart/${itemId}`, { quantity: newQty });
+            await axios.put(`${apiUrl}/cart/${itemId}`, { quantity: newQty });
             getCartData(); // Refresh tabel
             fetchCart();   // Refresh angka di navbar
         } catch (err) {
@@ -43,7 +45,7 @@ const Cart = () => {
     const deleteItem = async (itemId) => {
         if(!window.confirm("Yakin hapus barang ini?")) return;
         try {
-            await axios.delete(`http://127.0.0.1:8000/api/cart/${itemId}`);
+            await axios.delete(`${apiUrl}/cart/${itemId}`);
             getCartData();
             fetchCart();
         } catch (err) {
@@ -69,7 +71,7 @@ const Cart = () => {
 
     const handleCheckout = async () => {
         try {
-            const res = await axios.post('http://127.0.0.1:8000/api/checkout', {
+            const res = await axios.post(`${apiUrl}/checkout`, {
                 session_id: sessionId
             });
 

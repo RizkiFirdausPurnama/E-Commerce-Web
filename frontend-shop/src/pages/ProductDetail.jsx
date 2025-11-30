@@ -16,9 +16,11 @@ const [qty, setQty] = useState(1);
 
 const { addToCart } = useContext(CartContext);
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
   // Ambil data detail produk dari API
 useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/api/products/${slug}`)
+    axios.get(`${apiUrl}/products/${slug}`)
     .then(res => {
         setProduct(res.data);
         setLoading(false);

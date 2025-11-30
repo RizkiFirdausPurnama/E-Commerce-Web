@@ -6,6 +6,8 @@ const Home = () => {
 const [products, setProducts] = useState([]);
 const [visibleProducts, setVisibleProducts] = useState(4); 
 
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
 const location = useLocation();
 
 useEffect(() => {
@@ -18,7 +20,7 @@ useEffect(() => {
 }, [location]);
 
 useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/products')
+    axios.get(`${apiUrl}/products`)
     .then(res => {
         setProducts(res.data);
     })
