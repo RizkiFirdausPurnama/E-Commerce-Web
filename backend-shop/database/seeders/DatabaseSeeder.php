@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         // --- PRODUK LAMA (Sudah pakai link kamu) ---
         // 1. T-shirt Hitam
         $img_shirt1_depan  = 'https://static.zara.net/assets/public/a32a/2eb7/c3414781aeeb/63c99399f422/03992405800-p/03992405800-p.jpg?ts=1736866610191&w=1024'; 
-        $img_shirt1_detail = 'https://placehold.co/600x600/333/white?text=Detail+1';
+        $img_shirt1_detail = 'https://static.zara.net/assets/public/3203/e00c/956f4e90917a/f2c1afb2ed19/03992405800-e1/03992405800-e1.jpg?ts=1736779489113&w=1528';
 
         // 2. Jeans Biru
         $img_jeans1 = 'https://static.zara.net/assets/public/da36/004b/fcb8481e9242/4376db0fd458/04806330822-p/04806330822-p.jpg?ts=1755612663575&w=1024';
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             'review_count' => 5
         ]);
         ProductImage::create(['product_id' => $p2->id, 'image_url' => $img_jeans1, 'is_primary' => true]);
-        ProductVariant::create(['product_id' => $p2->id, 'color_name' => 'Blue', 'color_hex' => '#98D8EF', 'size' => '32', 'stock_quantity' => 20]);
+        ProductVariant::create(['product_id' => $p2->id, 'color_name' => 'Blue', 'color_hex' => '#000', 'size' => '32', 'stock_quantity' => 20]);
 
         // --- PRODUK 3: Checkered Shirt (Men) ---
         $p3 = Product::create([
