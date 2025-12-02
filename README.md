@@ -2,8 +2,9 @@
 
 **SHOP.CO** adalah aplikasi web E-Commerce responsif yang dibangun menggunakan arsitektur *Headless* (Frontend dan Backend terpisah). Project ini mengimplementasikan fitur belanja lengkap mulai dari katalog produk, varian warna/ukuran, keranjang belanja (cart), hingga sistem autentikasi pengguna.
 
-![Project Screenshot](https://placehold.co/1200x600/png?text=SHOP.CO+Preview) 
-*(Opsional: Ganti link di atas dengan screenshot asli website kamu)*
+#### 📸 Tampilan
+<img src=Document\shop.co.png>
+
 
 ---
 
