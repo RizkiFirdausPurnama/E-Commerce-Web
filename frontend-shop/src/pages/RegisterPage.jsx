@@ -22,7 +22,7 @@ const RegisterPage = () => {
                 password
             });
             
-            alert("Registrasi Berhasil! Silakan Login.");
+            toast.success("Registrasi Berhasil! Silakan Login.");
             navigate('/login'); // Arahkan ke halaman login
             
         } catch (error) {
