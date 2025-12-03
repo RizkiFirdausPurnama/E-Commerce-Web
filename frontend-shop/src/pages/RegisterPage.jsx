@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -28,9 +29,9 @@ const RegisterPage = () => {
             console.error(error);
             // Cek jika error validasi (misal email sudah ada)
             if (error.response && error.response.data.message) {
-                alert("Gagal: " + error.response.data.message);
+                toast.error("Gagal: " + error.response.data.message);
             } else {
-                alert("Registrasi Gagal.");
+                toast.error("Registrasi Gagal.");
             }
         }
     };

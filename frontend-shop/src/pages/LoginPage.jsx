@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext'; // Import Context
 import { useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -19,10 +20,10 @@ const LoginPage = () => {
         const success = await login(email, password);
         
         if (success) {
-            alert("Login Berhasil! Selamat berbelanja.");
+            toast.success("Login Berhasil! Selamat berbelanja.");
             navigate('/'); // Balik ke Home setelah login
         } else {
-            alert("Login Gagal! Email atau Password salah.");
+            toast.error("Login Gagal! Email atau Password salah.");
         }
     };
 

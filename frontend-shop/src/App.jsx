@@ -13,6 +13,7 @@ import RegisterPage from './pages/RegisterPage';
 
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext'; // Import Auth
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -20,6 +21,18 @@ function App() {
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
+        <Toaster 
+            position="top-center" 
+            reverseOrder={false} 
+            toastOptions={{
+                style: {
+                  borderRadius: '10px',
+                  background: '#333',
+                  color: '#fff',
+                  fontSize: '14px',
+                },
+            }}
+          />
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />

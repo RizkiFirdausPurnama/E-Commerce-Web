@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiTrash2, FiMinus, FiPlus } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -83,7 +84,7 @@ const Cart = () => {
             
         } catch (err) {
             console.error(err);
-            alert("Checkout Failed. Please try again.");
+            toast.error("Checkout Failed. Please try again.");
         }
     };
 

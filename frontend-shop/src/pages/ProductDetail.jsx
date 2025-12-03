@@ -4,6 +4,7 @@ import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext'; // 1. Import AuthContext
 import { FiMinus, FiPlus, FiCheck } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -42,27 +43,27 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
      // --- BAGIAN PROTEKSI LOGIN (SATPAM) ---
-     if (!user) {
-         alert("Eits! Anda harus Login dulu sebelum belanja.");
+    if (!user) {
+        toast.error("Eits! Anda harus Login dulu sebelum belanja.");
          navigate('/login'); // Tendang ke halaman Login
          return; // Stop, jangan lanjut ke bawah
-     }
+    }
      // -------------------------------------
 
      // Validasi pilihan
-     if (!selectedColor || !selectedSize) {
-         alert("Please select Color and Size first!");
-         return;
-     }
+    if (!selectedColor || !selectedSize) {
+        toast.error("Please select Color and Size first!");
+        return;
+    }
 
-     const variant = product.variants.find(v => v.color_hex === selectedColor && v.size === selectedSize);
-     
-     if(variant) {
-         addToCart(variant.id, qty);
-         alert(`Berhasil! ${qty} item masuk keranjang.`);
-     } else {
-         alert("Stok varian ini habis.");
-     }
+    const variant = product.variants.find(v => v.color_hex === selectedColor && v.size === selectedSize);
+    
+    if(variant) {
+        addToCart(variant.id, qty);
+        toast.success(`Berhasil! ${qty} item masuk keranjang.`);
+    } else {
+        toast.error("Stok varian ini habis.");
+    }
   };
 
   return (
@@ -85,15 +86,15 @@ const ProductDetail = () => {
         <div>
           <h1 className="text-4xl font-black uppercase mb-2 font-sans">{product.name}</h1>
           <div className="flex items-center mb-4 text-yellow-400 space-x-2">
-             <span>{'★'.repeat(Math.round(product.rating))} {'☆'.repeat(5 - Math.round(product.rating))}</span>
-             <span className="text-black text-sm">{product.rating}/5</span>
+            <span>{'★'.repeat(Math.round(product.rating))} {'☆'.repeat(5 - Math.round(product.rating))}</span>
+            <span className="text-black text-sm">{product.rating}/5</span>
           </div>
           
           <div className="flex items-center space-x-4 mb-6">
-               <span className="text-3xl font-bold">${product.base_price}</span>
-               {product.discount_percentage > 0 && (
+              <span className="text-3xl font-bold">${product.base_price}</span>
+              {product.discount_percentage > 0 && (
                   <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">-{product.discount_percentage}%</span>
-               )}
+              )}
           </div>
           
           <p className="text-gray-500 mb-6 leading-relaxed border-b border-gray-200 pb-6">
