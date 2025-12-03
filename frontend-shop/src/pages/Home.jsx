@@ -152,7 +152,7 @@ return (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* MEN */}
                 <Link to="/category/men" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative">Men</h3>
+                    <h3 className="text-3xl font-black z-10 relative text-white ">Men</h3>
                     <img 
                         src="https://i.pinimg.com/736x/87/65/ea/8765ea6af8697e060ed5fcdb6aa1bb0e.jpg" 
                         className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 

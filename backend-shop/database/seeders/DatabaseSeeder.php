@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         // --- PRODUK BARU (Masih Placeholder, Silakan ganti linknya nanti) ---
         $img_polo   = 'https://i.pinimg.com/736x/ad/81/4c/ad814c61731543f7ee96feabbf5a1fa0.jpg';
         $img_dress  = 'https://i.pinimg.com/736x/c1/69/e7/c169e7b8318c2378778222c02043b749.jpg';
-        $img_hoodie = 'https://i.pinimg.com/1200x/7c/fa/39/7cfa39a2f77804d8860949b72fc274ab.jpg';
+        $img_hoodie = 'https://static.zara.net/assets/public/3025/f300/3df642079c81/fd96ffc74acb/05431773800-e1/05431773800-e1.jpg?ts=1759999439244&w=1024';
         $img_shorts = 'https://i.pinimg.com/1200x/2d/e2/bd/2de2bdb95b864ff870386bb620084cab.jpg';
 
 
@@ -135,18 +135,18 @@ class DatabaseSeeder extends Seeder
         ProductImage::create(['product_id' => $p6->id, 'image_url' => $img_dress, 'is_primary' => true]);
         ProductVariant::create(['product_id' => $p6->id, 'color_name' => 'Pink', 'color_hex' => '#FFC0CB', 'size' => 'M', 'stock_quantity' => 10]);
 
-        // --- PRODUK 7 (BARU): Kids Cartoon Hoodie (Kids) ---
+        // --- PRODUK 7 (BARU): Kids Hoodie (Kids) ---
         $p7 = Product::create([
             'category_id' => $kids->id,
-            'name' => 'Kids Cartoon Hoodie',
-            'slug' => 'kids-cartoon-hoodie',
-            'description' => 'Hoodie anak dengan gambar kartun lucu dan bahan lembut.',
+            'name' => 'Kids Hoodie',
+            'slug' => 'kids-hoodie',
+            'description' => 'Hoodie anak dengan bahan lembut.',
             'base_price' => 85.00,
             'rating' => 4.2,
             'review_count' => 30
         ]);
         ProductImage::create(['product_id' => $p7->id, 'image_url' => $img_hoodie, 'is_primary' => true]);
-        ProductVariant::create(['product_id' => $p7->id, 'color_name' => 'Orange', 'color_hex' => '#FFA500', 'size' => 'S', 'stock_quantity' => 50]);
+        ProductVariant::create(['product_id' => $p7->id, 'color_name' => 'Orange', 'color_hex' => '#000000', 'size' => 'S', 'stock_quantity' => 50]);
 
         // --- PRODUK 8 (BARU): Denim Shorts (Kids) ---
         $p8 = Product::create([

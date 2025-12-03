@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
@@ -32,6 +33,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             
           </Routes>
+          <Footer />
         </BrowserRouter>
       </CartProvider>
     </AuthProvider>
