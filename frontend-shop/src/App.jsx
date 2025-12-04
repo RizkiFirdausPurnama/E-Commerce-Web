@@ -9,7 +9,10 @@ import CategoryPage from './pages/CategoryPage';
 import Success from './pages/Success';
 // Import Halaman Login & Register (Pastikan file ini sudah ada)
 import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage'; 
+import RegisterPage from './pages/RegisterPage';
+import ShopPage from './pages/ShopPage';
+import OnSalePage from './pages/OnSalePage';
+import BrandsPage from './pages/BrandsPage';
 
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext'; // Import Auth
@@ -40,6 +43,9 @@ function App() {
             <Route path="/product/:slug" element={<ProductDetail />} />
             <Route path="/category/:slug" element={<CategoryPage />} />
             <Route path="/success" element={<Success />} />
+            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/on-sale" element={<OnSalePage />} />
+            <Route path="/brands" element={<BrandsPage />} />
             
             {/* Route untuk Login & Register */}
             <Route path="/login" element={<LoginPage />} />

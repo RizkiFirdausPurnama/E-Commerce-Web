@@ -1,14 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut } from 'react-icons/fi';
+import { FiSearch, FiShoppingCart, FiUser, FiMenu, FiLogOut, FiX } from 'react-icons/fi'; // Tambah FiX untuk tombol close
 import { CartContext } from '../context/CartContext';
-import { AuthContext } from '../context/AuthContext'; // 1. Import AuthContext
+import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
   const { cartCount } = useContext(CartContext);
-  const { user, logout } = useContext(AuthContext); // 2. Ambil data user & fungsi logout
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false); // State untuk dropdown profil
+  const { user, logout } = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // State ini yang akan kita mainkan
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,94 +22,109 @@ const Navbar = () => {
     } else {
         navigate('/', { state: { scrollTo: 'new-arrivals' } });
     }
+    setIsMenuOpen(false); // Tutup menu setelah klik
   };
 
   const handleLogout = () => {
       logout();
       navigate('/login');
       setShowProfileMenu(false);
+      setIsMenuOpen(false);
   };
 
   return (
     <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="flex items-center justify-between px-6 md:px-10 py-6">
-        {/* Logo & Menu Mobile */}
+        
+        {/* KIRI: Toggle Menu & Logo */}
         <div className="flex items-center gap-4">
-          <FiMenu className="md:hidden text-2xl cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)} />
+          {/* Tombol Hamburger (Hanya muncul di Mobile) */}
+          <FiMenu 
+            className="md:hidden text-2xl cursor-pointer" 
+            onClick={() => setIsMenuOpen(true)} // Buka menu
+          />
           <Link to="/" className="text-3xl font-black tracking-tighter uppercase font-sans">SHOP.CO</Link>
         </div>
         
-        {/* Menu Desktop */}
+        {/* TENGAH: Menu Desktop (Hidden di Mobile) */}
         <div className="hidden md:flex items-center space-x-6 text-base font-medium">
-          <Link to="/category/men" className="hover:underline">Shop</Link>
-          <Link to="/category/men" className="hover:underline">On Sale</Link>
+          <Link to="/shop" className="hover:underline">Shop</Link>
+          <Link to="/on-sale" className="hover:underline">On Sale</Link>
           <button onClick={handleScrollToNewArrivals} className="hover:underline font-medium">New Arrivals</button>
-          <Link to="/category/kids" className="hover:underline">Brands</Link>
+          <Link to="/brands" className="hover:underline">Brands</Link>
         </div>
 
-        {/* Search Bar */}
+        {/* Search Bar (Hidden di Mobile, opsional bisa dimunculkan) */}
         <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-3 w-1/3">
           <FiSearch className="text-gray-500 text-xl" />
-          <input 
-            type="text" 
-            placeholder="Search for products..." 
-            className="bg-transparent border-none outline-none ml-2 w-full text-sm placeholder-gray-500" 
-          />
+          <input type="text" placeholder="Search for products..." className="bg-transparent border-none outline-none ml-2 w-full text-sm placeholder-gray-500" />
         </div>
 
-        {/* --- BAGIAN KANAN (LOGIKA LOGIN) --- */}
+        {/* KANAN: Cart & User */}
         <div className="flex items-center space-x-4">
+          <Link to="/cart" className="relative">
+            <FiShoppingCart className="text-2xl cursor-pointer hover:text-gray-600 transition" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">
+                {cartCount}
+              </span>
+            )}
+          </Link>
           
+          {/* ... Logika User/Login (Sama seperti sebelumnya) ... */}
           {user ? (
-            // SKENARIO 1: SUDAH LOGIN (Tampilkan Cart & User)
-            <>
-                <Link to="/cart" className="relative">
-                    <FiShoppingCart className="text-2xl cursor-pointer hover:text-gray-600 transition" />
-                    {cartCount > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">
-                        {cartCount}
-                        </span>
-                    )}
-                </Link>
-                
-                {/* User Icon dengan Dropdown */}
-                <div className="relative">
-                    <FiUser 
-                        className="text-2xl cursor-pointer hover:text-gray-600 transition" 
-                        onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    />
-                    
-                    {/* Dropdown Menu Kecil */}
-                    {showProfileMenu && (
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
-                            <div className="px-4 py-2 border-b border-gray-100">
-                                <p className="text-xs text-gray-500">Signed in as</p>
-                                <p className="font-bold truncate">{user.name}</p>
-                            </div>
-                            <button 
-                                onClick={handleLogout}
-                                className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-50 flex items-center gap-2 font-medium"
-                            >
-                                <FiLogOut /> Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
-            </>
+             <div className="relative">
+                <FiUser className="text-2xl cursor-pointer" onClick={() => setShowProfileMenu(!showProfileMenu)} />
+                {showProfileMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                        <p className="px-4 py-2 text-xs text-gray-500 font-bold border-b">Hi, {user.name}</p>
+                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-600 font-bold text-sm hover:bg-gray-50">Logout</button>
+                    </div>
+                )}
+             </div>
           ) : (
-            // SKENARIO 2: BELUM LOGIN (Tampilkan Tombol Login/Register)
-            <div className="flex items-center gap-3">
-                <Link to="/login" className="px-5 py-2 rounded-full border border-gray-300 font-medium hover:border-black transition">
-                    Login
-                </Link>
-                <Link to="/register" className="px-5 py-2 rounded-full bg-black text-white font-medium hover:bg-gray-800 transition">
-                    Sign Up
-                </Link>
-            </div>
+             <div className="hidden md:flex items-center gap-3">
+                <Link to="/login" className="font-bold text-sm">Login</Link>
+             </div>
           )}
-
         </div>
       </div>
+
+      {/* === MOBILE MENU OVERLAY (TAMPILAN MENU HP) === */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 flex">
+            
+            {/* Background Gelap (Klik untuk tutup) */}
+            <div className="fixed inset-0 bg-black/50" onClick={() => setIsMenuOpen(false)}></div>
+            
+            {/* Panel Menu Putih (Slide dari Kiri) */}
+            <div className="relative bg-white w-[80%] max-w-[300px] h-full shadow-2xl p-6 flex flex-col gap-6 animate-slide-in">
+                
+                {/* Header Menu */}
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-black uppercase">Menu</h2>
+                    <FiX className="text-2xl cursor-pointer" onClick={() => setIsMenuOpen(false)} />
+                </div>
+
+                {/* Link Navigasi */}
+                <nav className="flex flex-col gap-4 text-lg font-medium">
+                    <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="border-b pb-2">Shop</Link>
+                    <Link to="/on-sale" onClick={() => setIsMenuOpen(false)} className="border-b pb-2">On Sale</Link>
+                    <button onClick={handleScrollToNewArrivals} className="text-left border-b pb-2 font-medium">New Arrivals</button>
+                    <Link to="/brands" onClick={() => setIsMenuOpen(false)} className="border-b pb-2">Brands</Link>
+                </nav>
+
+                {/* Login/Register untuk Mobile (Jika belum login) */}
+                {!user && (
+                    <div className="mt-auto flex flex-col gap-3">
+                        <Link to="/login" onClick={() => setIsMenuOpen(false)} className="bg-black text-white py-3 rounded-full text-center font-bold">Login</Link>
+                        <Link to="/register" onClick={() => setIsMenuOpen(false)} className="border border-black py-3 rounded-full text-center font-bold">Register</Link>
+                    </div>
+                )}
+            </div>
+        </div>
+      )}
+
     </nav>
   );
 };

@@ -43,14 +43,54 @@ const Cart = () => {
     };
 
     // Fungsi Hapus Item
-    const deleteItem = async (itemId) => {
-        if(!window.confirm("Yakin hapus barang ini?")) return;
+    // 1. Fungsi untuk Memunculkan Pop-up Konfirmasi (Pengganti window.confirm)
+    const deleteItem = (itemId) => {
+        toast((t) => (
+            <div className="flex flex-col gap-2">
+                <span className="font-medium text-sm text-gray-800">
+                    Yakin ingin menghapus barang ini?
+                </span>
+                <div className="flex gap-2 mt-1">
+                    <button 
+                        onClick={() => {
+                            toast.dismiss(t.id); // Tutup pop-up
+                            performDelete(itemId); // Jalankan penghapusan
+                        }}
+                        className="bg-red-500 text-white px-3 py-1.5 rounded-md text-xs font-bold hover:bg-red-600 transition shadow-sm"
+                    >
+                        Hapus
+                    </button>
+                    <button 
+                        onClick={() => toast.dismiss(t.id)}
+                        className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-gray-200 transition border border-gray-200"
+                    >
+                        Batal
+                    </button>
+                </div>
+            </div>
+        ), {
+            duration: 5000, // Pop-up hilang sendiri setelah 5 detik
+            icon: '🗑️',
+            style: {
+                borderRadius: '12px',
+                background: '#fff',
+                color: '#333',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                border: '1px solid #f3f4f6',
+            },
+        });
+    };
+
+    // 2. Fungsi Eksekusi Hapus (Dipanggil saat tombol "Hapus" diklik)
+    const performDelete = async (itemId) => {
         try {
             await axios.delete(`${apiUrl}/cart/${itemId}`);
-            getCartData();
-            fetchCart();
+            getCartData(); // Refresh tabel
+            fetchCart();   // Refresh angka di navbar
+            toast.success("Barang berhasil dihapus!");
         } catch (err) {
             console.error(err);
+            toast.error("Gagal menghapus barang.");
         }
     };
 
