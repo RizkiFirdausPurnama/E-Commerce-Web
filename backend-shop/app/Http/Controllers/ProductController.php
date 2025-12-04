@@ -20,7 +20,10 @@ class ProductController extends Controller
                 $q->where('slug', $request->category);
             });
         }
-        
+        if ($request->has('search')) {
+            $searchTerm = $request->search;
+            $query->where('name', 'LIKE', "%{$searchTerm}%");
+        }
         // Jika ada request 'limit' (untuk Homepage)
         if ($request->has('limit')) {
             $query->limit($request->limit);

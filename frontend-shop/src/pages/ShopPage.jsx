@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const ShopPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
+    // 2. Ambil parameter search dari URL
+    const [searchParams] = useSearchParams();
+    const searchQuery = searchParams.get('search');
 useEffect(() => {
+    setLoading(true);
+    
+    // 3. Tentukan Endpoint (Apakah mode Search atau mode Semua Produk)
+    let endpoint = `${apiUrl}/products`;
+    
+    if (searchQuery) {
+        endpoint += `?search=${searchQuery}`; // Tambahkan query search
+    }
     // Ambil semua produk
     axios.get(`${apiUrl}/products`)
         .then(res => {
@@ -18,7 +29,7 @@ useEffect(() => {
         console.error(err);
         setLoading(false);
     });
-}, [apiUrl]);
+}, [apiUrl, searchQuery]);
 
 return (
     <div className="px-6 md:px-10 py-10 max-w-7xl mx-auto min-h-screen">
