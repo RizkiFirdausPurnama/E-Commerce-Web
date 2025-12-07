@@ -34,6 +34,12 @@ function App() {
                   color: '#fff',
                   fontSize: '14px',
                 },
+                success: {
+                    iconTheme: {
+                        primary: '#fff',
+                        secondary: '#333',
+                    },
+                },
             }}
           />
           <Navbar />

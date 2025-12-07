@@ -48,27 +48,45 @@ return (
 };
 
 // Kita buat komponen kecil biar kodenya rapi & bisa dipakai ulang
-export const ProductCard = ({ product }) => (
-<Link to={`/product/${product.slug}`} className="group cursor-pointer">
+export const ProductCard = ({ product }) => {
+return (
+    <Link to={`/product/${product.slug}`} className="group cursor-pointer">
+      {/* Gambar */}
     <div className="bg-[#F0EEED] rounded-2xl aspect-square mb-4 overflow-hidden relative">
         <img 
-        src={product.images[0]?.image_url} 
-        alt={product.name} 
-        className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+            src={product.images[0]?.image_url} 
+            alt={product.name} 
+            className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
         />
     </div>
-    <h3 className="font-bold text-lg truncate">{product.name}</h3>
+      {/* Nama Produk */}
+    <h3 className="font-bold text-lg truncate font-sans uppercase">{product.name}</h3>
+    
+      {/* Rating */}
     <div className="flex items-center space-x-2 text-sm my-1">
         <span className="text-yellow-400">★★★★☆</span>
         <span className="text-gray-500">{product.rating}/5</span>
     </div>
+    
+      {/* --- BAGIAN HARGA (LOGIKA SAMA PERSIS DENGAN HOME) --- */}
     <div className="flex items-center space-x-3 mt-1">
+          {/* 1. Harga Database (Ini Harga Jual) */}
         <span className="font-bold text-xl">${product.base_price}</span>
+        
+          {/* 2. Jika Diskon: Hitung Harga Asli (Dinaikkan) & Tampilkan Badge */}
         {product.discount_percentage > 0 && (
-        <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">-{product.discount_percentage}%</span>
+            <>
+                <span className="text-gray-400 line-through font-bold text-lg">
+                    ${(product.base_price * (100 + product.discount_percentage) / 100).toFixed(0)}
+                </span>
+                <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full font-medium">
+                    -{product.discount_percentage}%
+                </span>
+            </>
         )}
     </div>
-</Link>
+    </Link>
 );
+};
 
 export default ShopPage;
