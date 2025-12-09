@@ -59,9 +59,11 @@ return (
         <p className="text-gray-500 text-sm md:text-lg max-w-md">
             Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality.
         </p>
-        <button className="bg-black text-white px-10 md:px-16 py-4 rounded-full text-lg mt-4 hover:bg-gray-800 transition">
-            Shop Now
-        </button>
+        <Link 
+            to="/shop" 
+            className="bg-black text-white px-10 md:px-16 py-4 rounded-full text-lg mt-4 hover:bg-gray-800 transition inline-block"
+        >Shop Now
+        </Link>
         
         <div className="flex space-x-6 md:space-x-8 mt-8">
             <div><h3 className="text-2xl font-bold">200+</h3><p className="text-xs text-gray-500">Intl Brands</p></div>
