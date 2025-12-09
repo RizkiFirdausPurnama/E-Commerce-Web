@@ -46,4 +46,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 3. Checkout (Pindahkan ke sini agar tercatat siapa yang beli)
     Route::post('/checkout', [OrderController::class, 'checkout']);
+    Route::get('/orders', [OrderController::class, 'index']);
 });

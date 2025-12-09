@@ -169,20 +169,26 @@ const Navbar = () => {
           
           {/* 3. User / Login */}
           {user ? (
-             <div className="relative">
+            <div className="relative">
                 <FiUser className="text-2xl cursor-pointer" onClick={() => setShowProfileMenu(!showProfileMenu)} />
                 {showProfileMenu && (
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
                         <p className="px-4 py-2 text-xs text-gray-500 font-bold border-b">Hi, {user.name}</p>
+                        <Link 
+                          to="/orders" 
+                          onClick={() => setShowProfileMenu(false)}
+                          className="block w-full text-left px-4 py-2 text-black font-medium text-sm hover:bg-gray-50"
+                        >My Orders 
+                        </Link>
                         <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-600 font-bold text-sm hover:bg-gray-50">Logout</button>
                     </div>
                 )}
-             </div>
+            </div>
           ) : (
-             <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3">
                 <Link to="/login" className="px-4 py-2 text-sm font-bold border border-gray-300 rounded-full hover:border-black transition">Login</Link>
                 <Link to="/register" className="px-4 py-2 text-sm font-bold bg-black text-white rounded-full hover:bg-gray-800 transition">Sign Up</Link>
-             </div>
+            </div>
           )}
         </div>
       </div>

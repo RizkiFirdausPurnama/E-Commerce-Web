@@ -70,4 +70,16 @@ class OrderController extends Controller
             ]);
         });
     }
+    // Tambahkan method ini di dalam class OrderController
+    public function index(Request $request)
+    {
+        // Ambil pesanan milik user yang sedang login
+        // Urutkan dari yang terbaru (latest)
+        $orders = Order::with('items.productVariant.product.images') // Load detail item & produknya
+                    ->where('user_id', $request->user()->id)
+                    ->latest()
+                    ->get();
+
+        return response()->json($orders);
+    }
 }

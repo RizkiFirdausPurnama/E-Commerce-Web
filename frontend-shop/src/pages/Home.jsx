@@ -76,8 +76,6 @@ return (
             alt="Fashion Models" 
             className="object-cover h-[400px] md:h-[600px] w-full mix-blend-multiply" 
             />
-            <span className="absolute top-10 right-10 text-4xl">✦</span>
-            <span className="absolute top-1/2 left-10 text-2xl">✦</span>
         </div>
     </header>
 

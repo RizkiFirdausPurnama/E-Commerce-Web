@@ -17,6 +17,7 @@ import BrandsPage from './pages/BrandsPage';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext'; // Import Auth
 import { Toaster } from 'react-hot-toast';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 
 function App() {
   return (
@@ -56,7 +57,7 @@ function App() {
             {/* Route untuk Login & Register */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            
+            <Route path="/orders" element={<OrderHistoryPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>

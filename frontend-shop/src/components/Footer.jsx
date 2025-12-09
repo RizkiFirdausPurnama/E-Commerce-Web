@@ -42,7 +42,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
             {/* Copyright Text */}
             <p className="text-sm text-gray-500 text-center md:text-left">
-                Shop.co © 2000-2023. All Rights Reserved
+                Shop.co © 2025. All Rights Reserved
             </p>
 
             {/* Payment Icons */}
