@@ -75,10 +75,10 @@ class OrderController extends Controller
     {
         // Ambil pesanan milik user yang sedang login
         // Urutkan dari yang terbaru (latest)
-        $orders = Order::with('items.productVariant.product.images') // Load detail item & produknya
-                    ->where('user_id', $request->user()->id)
-                    ->latest()
-                    ->get();
+        $orders = Order::where('user_id', auth()->id())
+                ->with(['items.product_variant.product.images']) // Load sampai gambar
+                ->orderBy('created_at', 'desc')
+                ->get();
 
         return response()->json($orders);
     }
