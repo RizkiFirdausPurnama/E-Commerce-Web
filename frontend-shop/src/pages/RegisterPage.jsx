@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { AuthContext } from '../context/AuthContext'; // 1. Import Context
+import { AuthContext } from '../context/AuthContext';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -10,7 +10,6 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     
-    // 2. Ambil fungsi setUser agar bisa update status login
     const { setUser } = useContext(AuthContext);
 
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
@@ -24,19 +23,29 @@ const RegisterPage = () => {
                 password
             });
             
-            // === BAGIAN PERBAIKAN UTAMA ===
-            // 1. Simpan Token dengan nama yang BENAR ('token')
-            localStorage.setItem('token', response.data.token);
+            // === PERBAIKAN PENTING DI SINI ===
+            // Backend kamu mengirim 'access_token', jadi kita harus menangkapnya.
+            // Kode ini akan mencoba mencari 'token', kalau tidak ada dia ambil 'access_token'.
+            const token = response.data.token || response.data.access_token;
+
+            // Jika token tetap tidak ada (backend error), hentikan proses
+            if (!token) {
+                toast.success("Registrasi Berhasil! Silakan Login Manual.");
+                navigate('/login');
+                return;
+            }
+
+            // 1. Simpan Token yang sudah pasti benar
+            localStorage.setItem('token', token);
             
             // 2. Set Header agar request selanjutnya dianggap login
-            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             
             // 3. Update status user di aplikasi
             setUser(response.data.user);
-            // ==============================
             
-            toast.success("Registrasi Berhasil! Selamat datang.");
-            navigate('/'); // Langsung masuk ke Home (Auto Login)
+            toast.success("Registrasi Berhasil! Anda otomatis login.");
+            navigate('/'); // Langsung masuk ke Home
             
         } catch (error) {
             console.error(error);
