@@ -2,13 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    // --- BARIS INI WAJIB ADA ---
-    protected $guarded = []; 
+    use HasFactory;
 
+    protected $guarded = [];
+
+    // 👇 TAMBAHKAN FUNGSI INI (PENTING!)
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Tambahan: Relasi ke OrderItem (biasanya sudah ada/akan butuh)
     public function items()
     {
         return $this->hasMany(OrderItem::class);

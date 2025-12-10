@@ -6,22 +6,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // <--- 1. WAJIB IMPORT INI
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable; // <--- 2. PASANG DI SINI
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
-    // protected $fillable = [ ... ]; // Kita matikan fillable bawaan
-    
-    // GANTI DENGAN INI BIAR GAMPANG:
-    protected $guarded = []; 
+    // Kita gunakan $fillable agar lebih aman dan eksplisit
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role', // <--- PENTING: Tambahkan ini agar Seeder bisa mengisi kolom role
+    ];
+
+    // protected $guarded = []; // Baris ini dihapus atau dikomentari saja
 
     /**
      * The attributes that should be hidden for serialization.
@@ -44,5 +49,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

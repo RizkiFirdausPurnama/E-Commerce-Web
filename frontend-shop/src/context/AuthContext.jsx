@@ -4,64 +4,101 @@ import axios from 'axios';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // Cek apakah ada token tersimpan di Local Storage
-    const [token, setToken] = useState(localStorage.getItem('auth_token') || null);
-    const [user, setUser] = useState(null);
-    
-    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); 
+  const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-    // Set default header axios jika token ada
-    if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    }
-
-    // Fungsi Login
-    const login = async (email, password) => {
-        try {
-            const res = await axios.post(`${apiUrl}/login`, { email, password });
-            const newToken = res.data.access_token;
-            
-            // Simpan token ke storage & state
-            localStorage.setItem('auth_token', newToken);
-            setToken(newToken);
-            setUser(res.data.user);
-            
-            // Set header agar request selanjutnya dianggap login
-            axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-            return true;
-        } catch (error) {
-            console.error("Login Gagal:", error);
-            return false;
-        }
-    };
-
-    // Fungsi Logout
-    const logout = async () => {
-        try {
-            await axios.post(`${apiUrl}/logout`);
-        } catch(e) { console.error(e); }
+  // 1. Cek User saat halaman direfresh
+  useEffect(() => {
+    const checkUser = async () => {
+        const token = localStorage.getItem('token');
         
-        localStorage.removeItem('auth_token');
-        setToken(null);
-        setUser(null);
-        delete axios.defaults.headers.common['Authorization'];
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            // DEBUG: Pastikan token terambil
+            console.log("Token ditemukan di storage, mencoba validasi...");
+
+            // KITA PAKAI HEADER LANGSUNG DISINI (Lebih Aman dibanding defaults)
+            const res = await axios.get(`${apiUrl}/user`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            console.log("User valid:", res.data);
+            
+            // Set default untuk request selanjutnya
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setUser(res.data);
+            
+        } catch (error) {
+            console.error("Gagal validasi user (Token Expired/Salah):", error);
+            // Hapus token HANYA jika error 401 (Unauthorized)
+            if (error.response && error.response.status === 401) {
+                localStorage.removeItem('token');
+                delete axios.defaults.headers.common['Authorization'];
+                setUser(null);
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Cek User Profile saat aplikasi dimuat (agar tidak logout saat refresh)
-    useEffect(() => {
-        if (token) {
-            axios.get(`${apiUrl}/user`)
-                .then(res => setUser(res.data))
-                .catch(() => {
-                    // Kalau token tidak valid/expired, logout paksa
-                    logout();
-                });
-        }
-    }, [token, apiUrl]);
+    checkUser();
+  }, [apiUrl]);
 
-    return (
-        <AuthContext.Provider value={{ user, token, login, logout }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  // 2. Fungsi Login
+  const login = async (email, password) => {
+    try {
+        const res = await axios.post(`${apiUrl}/login`, { email, password });
+        
+        // DEBUG: Lihat apa yang dikasih Backend
+        console.log("Respon Login dari Backend:", res.data);
+
+        // PENTING: Cek apakah backend pakai nama 'token' atau 'access_token'
+        // Kode di bawah otomatis pilih yang ada isinya
+        const token = res.data.token || res.data.access_token; 
+
+        if (!token) {
+            throw new Error("Token tidak ditemukan di respon backend!");
+        }
+        
+        // Simpan Token
+        localStorage.setItem('token', token);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        
+        // Simpan User
+        setUser(res.data.user);
+        
+        return { success: true, role: res.data.user.role }; 
+    } catch (error) {
+        console.error("Login Error:", error);
+        return { success: false, message: error.response?.data?.message || "Login Failed" };
+    }
+  };
+
+  const logout = async () => {
+    try {
+        // Sertakan header saat logout juga
+        const token = localStorage.getItem('token');
+        await axios.post(`${apiUrl}/logout`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+    } catch (error) {
+        console.error(error);
+    }
+    localStorage.removeItem('token');
+    delete axios.defaults.headers.common['Authorization'];
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
+        {children}
+    </AuthContext.Provider>
+  );
 };

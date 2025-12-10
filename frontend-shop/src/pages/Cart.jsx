@@ -114,17 +114,42 @@ const Cart = () => {
     }, 0);
 
     const handleCheckout = async () => {
+        // 1. Ambil token manual dari Local Storage
+        const token = localStorage.getItem('token');
+
+        // 2. Cek apakah user benar-benar login?
+        if (!token) {
+            toast.error("Silakan login dulu untuk checkout");
+            navigate('/login'); // Lempar ke halaman login
+            return;
+        }
+
         try {
-            const res = await axios.post(`${apiUrl}/checkout`, {
-                session_id: sessionId
-            });
-            fetchCart();
+            // 3. Kirim request DENGAN Header Token
+            const res = await axios.post(`${apiUrl}/checkout`, 
+                {
+                    session_id: sessionId, // Data body
+                    // Boleh tambah total_price jika backend butuh
+                    // total_price: totalPrice 
+                }, 
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}` // <--- INI KUNCINYA
+                    }
+                }
+            );
+
+            fetchCart(); // Update navbar (keranjang jadi 0)
             toast.success("Checkout Berhasil!");
             navigate('/success', { state: { orderNumber: res.data.order_number } });
+
         } catch (err) {
             console.error(err);
-            if(err.response && err.response.status === 400) {
-                toast.error("Keranjang kosong atau sesi habis.");
+            if(err.response && err.response.status === 401) {
+                toast.error("Sesi habis. Silakan login ulang.");
+                navigate('/login');
+            } else if(err.response && err.response.status === 400) {
+                toast.error("Keranjang kosong.");
             } else {
                 toast.error("Gagal Checkout. Coba lagi.");
             }

@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,4 +48,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // 3. Checkout (Pindahkan ke sini agar tercatat siapa yang beli)
     Route::post('/checkout', [OrderController::class, 'checkout']);
     Route::get('/orders', [OrderController::class, 'index']);
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    
+    // Dashboard Stats
+    Route::get('/stats', [AdminController::class, 'stats']);
+    Route::get('/orders', [AdminController::class, 'getAllOrders']);
+    Route::get('/customers', [AdminController::class, 'getAllCustomers']);
+    // Nanti kita tambah route CRUD Produk di sini...
 });

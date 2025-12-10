@@ -6,7 +6,10 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\ProductVariant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+
 
 class DatabaseSeeder extends Seeder
 {
@@ -165,5 +168,12 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'admin@shop.co',
+            'password' => Hash::make('password123'), // Password Admin
+            'role' => 'admin' // <--- Ini kuncinya
+        ]);
+
     }
 }

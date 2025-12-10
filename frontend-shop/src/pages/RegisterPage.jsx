@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { AuthContext } from '../context/AuthContext'; // 1. Import Context
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -9,25 +10,36 @@ const RegisterPage = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     
-    // Ambil URL dari Environment Variable
+    // 2. Ambil fungsi setUser agar bisa update status login
+    const { setUser } = useContext(AuthContext);
+
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            // Panggil API Register Laravel
-            await axios.post(`${apiUrl}/register`, {
+            const response = await axios.post(`${apiUrl}/register`, {
                 name,
                 email,
                 password
             });
             
-            toast.success("Registrasi Berhasil! Silakan Login.");
-            navigate('/login'); // Arahkan ke halaman login
+            // === BAGIAN PERBAIKAN UTAMA ===
+            // 1. Simpan Token dengan nama yang BENAR ('token')
+            localStorage.setItem('token', response.data.token);
+            
+            // 2. Set Header agar request selanjutnya dianggap login
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            
+            // 3. Update status user di aplikasi
+            setUser(response.data.user);
+            // ==============================
+            
+            toast.success("Registrasi Berhasil! Selamat datang.");
+            navigate('/'); // Langsung masuk ke Home (Auto Login)
             
         } catch (error) {
             console.error(error);
-            // Cek jika error validasi (misal email sudah ada)
             if (error.response && error.response.data.message) {
                 toast.error("Gagal: " + error.response.data.message);
             } else {
@@ -37,42 +49,33 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="flex justify-center items-center h-[80vh] px-4">
+        <div className="flex justify-center items-center h-[80vh] px-4 bg-gray-50">
             <form onSubmit={handleRegister} className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
-                <h2 className="text-3xl font-black mb-6 text-center">REGISTER</h2>
+                <h2 className="text-3xl font-black mb-6 text-center uppercase font-sans">Register</h2>
                 
                 <div className="mb-4">
-                    <label className="block mb-2 font-bold">Full Name</label>
+                    <label className="block mb-2 font-bold text-sm">Full Name</label>
                     <input 
-                        type="text" 
-                        value={name} 
-                        onChange={e=>setName(e.target.value)} 
-                        className="w-full border p-3 rounded-lg" 
-                        placeholder="John Doe"
+                        type="text" value={name} onChange={e=>setName(e.target.value)} 
+                        className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black" 
                         required 
                     />
                 </div>
 
                 <div className="mb-4">
-                    <label className="block mb-2 font-bold">Email</label>
+                    <label className="block mb-2 font-bold text-sm">Email Address</label>
                     <input 
-                        type="email" 
-                        value={email} 
-                        onChange={e=>setEmail(e.target.value)} 
-                        className="w-full border p-3 rounded-lg" 
-                        placeholder="john@example.com"
+                        type="email" value={email} onChange={e=>setEmail(e.target.value)} 
+                        className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black" 
                         required 
                     />
                 </div>
 
                 <div className="mb-6">
-                    <label className="block mb-2 font-bold">Password</label>
+                    <label className="block mb-2 font-bold text-sm">Password</label>
                     <input 
-                        type="password" 
-                        value={password} 
-                        onChange={e=>setPassword(e.target.value)} 
-                        className="w-full border p-3 rounded-lg" 
-                        placeholder="Minimum 8 characters"
+                        type="password" value={password} onChange={e=>setPassword(e.target.value)} 
+                        className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black" 
                         required 
                     />
                 </div>
@@ -81,8 +84,8 @@ const RegisterPage = () => {
                     Create Account
                 </button>
                 
-                <p className="mt-4 text-center">
-                    Sudah punya akun? <Link to="/login" className="text-blue-500 font-bold">Login</Link>
+                <p className="mt-6 text-center text-sm text-gray-500">
+                    Sudah punya akun? <Link to="/login" className="text-black font-bold hover:underline">Login di sini</Link>
                 </p>
             </form>
         </div>

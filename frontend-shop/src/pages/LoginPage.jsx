@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext'; // Import Context
+import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
@@ -7,23 +7,32 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
-    // Ambil fungsi login dari AuthContext
     const { login } = useContext(AuthContext);
-    
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Panggil fungsi login dari Context
-        // Fungsi ini akan otomatis request ke API Laravel
-        const success = await login(email, password);
+        // Panggil fungsi login (yang sudah diupdate di AuthContext)
+        // Sekarang dia mengembalikan object: { success: true, role: '...' }
+        const result = await login(email, password);
         
-        if (success) {
-            toast.success("Login Berhasil! Selamat berbelanja.");
-            navigate('/'); // Balik ke Home setelah login
+        if (result.success) {
+            toast.success("Login Berhasil! Selamat datang.");
+            
+            // --- LOGIKA PENGARAHAN (REDIRECT) ---
+            if (result.role === 'admin') {
+                // Jika Kartu Identitasnya 'admin', masuk ke Dashboard
+                navigate('/admin/dashboard');
+            } else {
+                // Jika User Biasa, masuk ke Home
+                navigate('/'); 
+            }
+            // ------------------------------------
+
         } else {
-            toast.error("Login Gagal! Email atau Password salah.");
+            // Tampilkan pesan error jika login gagal
+            toast.error(result.message || "Login Gagal! Email atau Password salah.");
         }
     };
 

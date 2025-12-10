@@ -12,29 +12,30 @@ class AuthController extends Controller
     // 1. REGISTER
     public function register(Request $request)
     {
-        // Validasi input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8',
-        ]);
+    // 1. Validasi (Biarkan seperti yang sudah ada)
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+    ]);
 
-        // Buat User Baru
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    // 2. Buat User Baru
+    $user = User::create([
+        'name' => $validated['name'],
+        'email' => $validated['email'],
+        'password' => Hash::make($validated['password']),
+        'role' => 'customer' // Default user biasa
+    ]);
 
-        // Buat Token
-        $token = $user->createToken('auth_token')->plainTextToken;
+    // 3. (BAGIAN BARU) BUAT TOKEN LANGSUNG
+    $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Registration success',
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
+    // 4. Kembalikan User DAN Token ke Frontend
+    return response()->json([
+        'message' => 'Register Success',
+        'user' => $user,
+        'token' => $token, // <-- Ini kuncinya biar auto login
+    ], 201);
     }
 
     // 2. LOGIN
