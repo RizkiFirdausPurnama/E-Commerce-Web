@@ -1,7 +1,13 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 export const CartContext = createContext();
+
+// --- TAMBAHAN PENTING: Custom Hook useCart ---
+// Ini yang bikin error "does not provide an export named useCart" hilang
+export const useCart = () => {
+    return useContext(CartContext);
+};
 
 export const CartProvider = ({ children }) => {
   const [cartCount, setCartCount] = useState(0);
@@ -21,51 +27,55 @@ export const CartProvider = ({ children }) => {
 
   const sessionId = getSessionId();
 
-  // 2. Fungsi Ambil Data Keranjang (DIPERBAIKI)
+  // 2. Fungsi Ambil Data Keranjang
   const fetchCart = async () => {
-    // Jangan fetch kalau URL API belum ada
     if (!apiUrl) return;
 
     try {
       const res = await axios.get(`${apiUrl}/cart/${sessionId}`);
       
-      // --- BAGIAN PENGAMAN (FIX) ---
-      // Cek apakah data yang diterima benar-benar Array?
       if (Array.isArray(res.data)) {
           const totalItems = res.data.reduce((acc, item) => acc + item.quantity, 0);
           setCartCount(totalItems);
       } else {
-          // Jika bukan array (misal error object), set 0 biar gak crash
-          console.warn("Response keranjang bukan array:", res.data);
           setCartCount(0);
       }
-      // ----------------------------
-
     } catch (err) {
       console.error("Gagal ambil keranjang:", err);
-      // Jika error 404 (keranjang belum ada), itu wajar, set 0
       setCartCount(0);
     }
   };
 
-  // Jalankan fetchCart saat pertama kali web dibuka
   useEffect(() => {
     if(apiUrl) {
         fetchCart();
     }
   }, [apiUrl]);
 
-  // 3. Fungsi Tambah ke Keranjang
-  const addToCart = async (variantId, qty) => {
+  // 3. Fungsi Tambah ke Keranjang (DIPERBAIKI AGAR FLEKSIBEL)
+  // Bisa menerima (id, qty) ATAU ({ variant_id, quantity, ... })
+  const addToCart = async (arg1, arg2 = 1) => {
+    let variantId, qty;
+
+    // Cek apakah arg1 adalah object (dari ProductDetail baru)
+    if (typeof arg1 === 'object' && arg1 !== null) {
+        variantId = arg1.variant_id; // Ambil ID variant
+        qty = arg1.quantity || 1;    // Ambil quantity
+    } else {
+        // Jika cara lama (dari halaman lain)
+        variantId = arg1;
+        qty = arg2;
+    }
+
     try {
       await axios.post(`${apiUrl}/cart`, {
         session_id: sessionId,
         product_variant_id: variantId,
         quantity: qty
       });
-      // Update jumlah di navbar setelah berhasil simpan
-      fetchCart(); 
-      return true; // Beri tanda sukses
+      
+      fetchCart(); // Update navbar
+      return true; 
     } catch (err) {
       console.error("Gagal tambah ke cart", err);
       return false;

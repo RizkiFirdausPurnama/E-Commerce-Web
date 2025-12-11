@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useRef } from 'react'; // Tambah useRef
+import React, { useEffect, useState, useContext, useRef } from 'react'; 
 import axios from 'axios';
 import { FiTrash2, FiMinus, FiPlus } from 'react-icons/fi';
 import { CartContext } from '../context/CartContext';
@@ -11,6 +11,15 @@ const Cart = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+    // --- FUNGSI PINTAR: PERBAIKI LINK GAMBAR ---
+    const getImageUrl = (path) => {
+        if (!path) return 'https://placehold.co/300';
+        if (path.startsWith('http')) return path; 
+        const baseUrl = apiUrl.replace('/api', '');
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        return `${baseUrl}${cleanPath}`;
+    };
 
     // Ref untuk menyimpan timer Debounce
     const debounceTimeout = useRef(null);
@@ -35,37 +44,29 @@ const Cart = () => {
     const updateQty = (itemId, newQty) => {
         if (newQty < 1) return;
 
-        // 1. OPTIMISTIC UI: Update tampilan layar DULUAN (Instan)
-        // Kita manipulasi state lokal biar user merasa cepat
         setCartItems(prevItems => 
             prevItems.map(item => 
                 item.id === itemId ? { ...item, quantity: newQty } : item
             )
         );
 
-        // 2. DEBOUNCE: Tahan request ke server
-        // Kalau ada request pending sebelumnya, batalkan dulu
         if (debounceTimeout.current) {
             clearTimeout(debounceTimeout.current);
         }
 
-        // Tunggu 500ms setelah klik terakhir, baru kirim ke server
         debounceTimeout.current = setTimeout(() => {
             axios.put(`${apiUrl}/cart/${itemId}`, { quantity: newQty })
                 .then(() => {
-                    // Sukses di server, sinkronkan ulang navbar
                     fetchCart(); 
                 })
                 .catch(err => {
                     console.error(err);
                     toast.error("Gagal update stok");
-                    // Kalau gagal, kembalikan data asli dari server (Rollback)
                     getCartData(); 
                 });
         }, 500); 
     };
 
-    // Fungsi Hapus Item (Tetap sama, tambahkan update state lokal biar cepat)
     const deleteItem = (itemId) => {
         toast((t) => (
             <div className="flex flex-col gap-2">
@@ -94,52 +95,38 @@ const Cart = () => {
     };
 
     const performDelete = async (itemId) => {
-        // Optimistic Delete: Hapus dari layar dulu
         setCartItems(prev => prev.filter(item => item.id !== itemId));
 
         try {
             await axios.delete(`${apiUrl}/cart/${itemId}`);
-            fetchCart(); // Update navbar
+            fetchCart(); 
             toast.success("Item dihapus");
         } catch (err) {
             console.error(err);
             toast.error("Gagal menghapus");
-            getCartData(); // Rollback jika gagal
+            getCartData(); 
         }
     };
 
-    // Hitung Total Harga (Otomatis cepat karena pakai state lokal)
     const totalPrice = cartItems.reduce((acc, item) => {
         return acc + (item.product_variant.product.base_price * item.quantity);
     }, 0);
 
     const handleCheckout = async () => {
-        // 1. Ambil token manual dari Local Storage
         const token = localStorage.getItem('token');
-
-        // 2. Cek apakah user benar-benar login?
         if (!token) {
             toast.error("Silakan login dulu untuk checkout");
-            navigate('/login'); // Lempar ke halaman login
+            navigate('/login'); 
             return;
         }
 
         try {
-            // 3. Kirim request DENGAN Header Token
             const res = await axios.post(`${apiUrl}/checkout`, 
-                {
-                    session_id: sessionId, // Data body
-                    // Boleh tambah total_price jika backend butuh
-                    // total_price: totalPrice 
-                }, 
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}` // <--- INI KUNCINYA
-                    }
-                }
+                { session_id: sessionId }, 
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            fetchCart(); // Update navbar (keranjang jadi 0)
+            fetchCart(); 
             toast.success("Checkout Berhasil!");
             navigate('/success', { state: { orderNumber: res.data.order_number } });
 
@@ -178,8 +165,9 @@ const Cart = () => {
                         {cartItems.map(item => (
                             <div key={item.id} className="flex flex-col md:flex-row items-center gap-6 border-b border-gray-100 pb-6 last:border-0 last:pb-0">
                                 <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                                    {/* GUNAKAN getImageUrl DISINI */}
                                     <img 
-                                        src={item.product_variant.product.images[0]?.image_url} 
+                                        src={getImageUrl(item.product_variant.product.images[0]?.image_url)} 
                                         className="w-full h-full object-cover" 
                                         alt="Product"
                                     />
@@ -196,26 +184,14 @@ const Cart = () => {
 
                                 <div className="flex items-center gap-6">
                                     <div className="flex items-center bg-[#F0F0F0] rounded-full px-4 py-2 space-x-4">
-                                        {/* Tombol Kurang */}
-                                        <button 
-                                            onClick={() => updateQty(item.id, item.quantity - 1)} 
-                                            className="text-sm hover:text-gray-600 active:scale-90 transition"
-                                        >
+                                        <button onClick={() => updateQty(item.id, item.quantity - 1)} className="text-sm hover:text-gray-600 active:scale-90 transition">
                                             <FiMinus/>
                                         </button>
-                                        
-                                        {/* Angka Jumlah */}
                                         <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
-                                        
-                                        {/* Tombol Tambah */}
-                                        <button 
-                                            onClick={() => updateQty(item.id, item.quantity + 1)} 
-                                            className="text-sm hover:text-gray-600 active:scale-90 transition"
-                                        >
+                                        <button onClick={() => updateQty(item.id, item.quantity + 1)} className="text-sm hover:text-gray-600 active:scale-90 transition">
                                             <FiPlus/>
                                         </button>
                                     </div>
-
                                     <button onClick={() => deleteItem(item.id)} className="text-red-500 hover:bg-red-50 p-2 rounded-full transition">
                                         <FiTrash2 size={20} />
                                     </button>
@@ -244,18 +220,12 @@ const Cart = () => {
                                 <span className="font-bold text-black">$15.00</span>
                             </div>
                         </div>
-                        
                         <hr className="mb-6"/>
-                        
                         <div className="flex justify-between mb-6 text-xl font-bold">
                             <span>Total</span>
                             <span>${(totalPrice + 15).toFixed(2)}</span>
                         </div>
-                        
-                        <button 
-                            onClick={handleCheckout} 
-                            className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                        >
+                        <button onClick={handleCheckout} className="w-full bg-black text-white py-4 rounded-full font-medium hover:bg-gray-800 transition flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                             Go to Checkout <span className="text-lg">→</span>
                         </button>
                     </div>

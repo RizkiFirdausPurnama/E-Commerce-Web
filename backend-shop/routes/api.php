@@ -56,5 +56,5 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/stats', [AdminController::class, 'stats']);
     Route::get('/orders', [AdminController::class, 'getAllOrders']);
     Route::get('/customers', [AdminController::class, 'getAllCustomers']);
-    // Nanti kita tambah route CRUD Produk di sini...
+    Route::post('/products', [AdminController::class, 'addProduct']);
 });

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Tambah useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
-import { AuthContext } from '../context/AuthContext'; // 1. Import AuthContext
+import { AuthContext } from '../context/AuthContext';
 import { FiMinus, FiPlus, FiCheck } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
@@ -17,10 +17,22 @@ const ProductDetail = () => {
   const [qty, setQty] = useState(1);
 
   const { addToCart } = useContext(CartContext);
-  const { user } = useContext(AuthContext); // 2. Ambil data User dari Context
-  const navigate = useNavigate(); // 3. Hook untuk pindah halaman
+  const { user } = useContext(AuthContext); 
+  const navigate = useNavigate();
 
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // --- HANYA INI TAMBAHAN DARI SAYA (Supaya Gambar Muncul) ---
+  const getImageUrl = (path) => {
+      if (!path) return 'https://placehold.co/400?text=No+Image';
+      if (path.startsWith('http')) return path; 
+      
+      const baseUrl = apiUrl.replace('/api', '');
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+      
+      return `${baseUrl}${cleanPath}`;
+  };
+  // -----------------------------------------------------------
 
   // Ambil data produk
   useEffect(() => {
@@ -41,6 +53,7 @@ const ProductDetail = () => {
   const uniqueColors = [...new Set(product.variants.map(v => v.color_hex))];
   const uniqueSizes = [...new Set(product.variants.map(v => v.size))];
 
+  // --- LOGIC ASLI KAMU (TIDAK SAYA UBAH SAMA SEKALI) ---
   const handleAddToCart = () => {
      // --- BAGIAN PROTEKSI LOGIN (SATPAM) ---
     if (!user) {
@@ -70,15 +83,24 @@ const ProductDetail = () => {
     <div className="px-6 md:px-10 py-10 max-w-7xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16">
         
-        {/* GAMBAR */}
+        {/* GAMBAR (SAYA PASANG getImageUrl DISINI SAJA) */}
         <div className="flex flex-col-reverse md:flex-row gap-4">
             <div className="flex md:flex-col gap-4 overflow-x-auto">
                 {product.images.map((img, idx) => (
-                    <img key={idx} src={img.image_url} className="w-20 h-20 md:w-32 md:h-32 object-cover rounded-xl border border-transparent hover:border-black cursor-pointer bg-gray-100" alt="thumb"/>
+                    <img 
+                        key={idx} 
+                        src={getImageUrl(img.image_url)} // Pakai Helper Image
+                        className="w-20 h-20 md:w-32 md:h-32 object-cover rounded-xl border border-transparent hover:border-black cursor-pointer bg-gray-100" 
+                        alt="thumb"
+                    />
                 ))}
             </div>
             <div className="flex-1 bg-[#F0EEED] rounded-2xl overflow-hidden">
-                <img src={product.images[0]?.image_url} className="w-full h-full object-cover" alt="Main Product" />
+                <img 
+                    src={getImageUrl(product.images[0]?.image_url)} // Pakai Helper Image
+                    className="w-full h-full object-cover" 
+                    alt="Main Product" 
+                />
             </div>
         </div>
 

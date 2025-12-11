@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Category;
+use App\Models\Category; // Kita pakai Model Category lagi
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -11,25 +11,30 @@ class ProductController extends Controller
     // 1. Mengambil semua produk (bisa difilter)
     public function index(Request $request)
     {
-        // Mulai query produk beserta relasinya (kategori, gambar, varian)
-        $query = Product::with(['category', 'images', 'variants']);
+        // UBAH 1: Tambahkan 'category' ke dalam with() agar frontend tahu nama kategorinya
+        $query = Product::with(['images', 'variants', 'category']);
 
-        // Jika ada request 'category' (misal: ?category=pria)
+        // UBAH 2: Filter menggunakan RELASI (whereHas), bukan kolom string biasa
         if ($request->has('category') && $request->category != 'all') {
-            $query->whereHas('category', function ($q) use ($request) {
-                $q->where('slug', $request->category);
+            $kategoriDicari = $request->category; // Misal: "men"
+
+            // Logic Baru (Relasi):
+            // "Cari produk yang punya Kategori, dimana Slug atau Nama kategori tersebut cocok"
+            $query->whereHas('category', function($q) use ($kategoriDicari) {
+                $q->where('slug', $kategoriDicari)
+                  ->orWhere('name', $kategoriDicari); 
             });
         }
+
         if ($request->has('search')) {
             $searchTerm = $request->search;
             $query->where('name', 'LIKE', "%{$searchTerm}%");
         }
-        // Jika ada request 'limit' (untuk Homepage)
+
         if ($request->has('limit')) {
             $query->limit($request->limit);
         }
 
-        // Urutkan dari yang terbaru
         $products = $query->latest()->get();
 
         return response()->json($products);
@@ -38,14 +43,18 @@ class ProductController extends Controller
     // 2. Mengambil detail 1 produk
     public function show($slug)
     {
-        $product = Product::with(['category', 'images', 'variants'])
+        // UBAH 3: Load relasi category juga disini
+        $product = Product::with(['images', 'variants', 'category'])
                         ->where('slug', $slug)
                         ->firstOrFail();
+                        
         return response()->json($product);
     }
 
-    // 3. Mengambil daftar kategori untuk sidebar
+    // 3. Mengambil daftar kategori
     public function categories() {
-        return response()->json(Category::all());
+        // Ambil langsung dari tabel categories
+        $categories = Category::all();
+        return response()->json($categories);
     }
 }

@@ -1,10 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'; // Tambah Outlet
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom'; 
 
 // Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import AdminLayout from './components/AdminLayout'; // Pastikan path ini benar
+import AdminLayout from './components/AdminLayout'; 
 
 // Pages User
 import Home from './pages/Home';
@@ -23,6 +23,8 @@ import OrderHistoryPage from './pages/OrderHistoryPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminCustomersPage from './pages/admin/AdminCustomersPage';
+import AddProductPage from './pages/admin/AddProductPage';
+import AdminProductsPage from './pages/admin/AdminProductsPage';
 
 // Context & Utils
 import { CartProvider } from './context/CartContext';
@@ -30,13 +32,12 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
 
 // --- LAYOUT KHUSUS USER (TOKO) ---
-// Layout ini menggabungkan Navbar + Halaman Isi + Footer
 const ShopLayout = () => {
   return (
     <>
       <Navbar />
       <div className="min-h-screen">
-        <Outlet /> {/* Ini tempat halaman (Home/Shop/Cart) dirender */}
+        <Outlet />
       </div>
       <Footer />
     </>
@@ -49,21 +50,23 @@ function App() {
       <CartProvider>
         <BrowserRouter>
           
-          {/* Toaster tetap di paling luar agar muncul di mana saja */}
           <Toaster 
-             position="top-center" 
-             toastOptions={{
+            position="top-center" 
+            toastOptions={{
                 style: { borderRadius: '10px', background: '#333', color: '#fff' },
-             }}
+            }}
           />
 
           <Routes>
-            {/* === GRUP 1: HALAMAN TOKO (Pakai Navbar & Footer) === */}
+            {/* === GRUP 1: HALAMAN TOKO === */}
             <Route element={<ShopLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/product/:slug" element={<ProductDetail />} />
-                <Route path="/category/:slug" element={<CategoryPage />} />
+                
+                {/* UBAH 1: Sesuaikan parameter dengan CategoryPage.jsx (:categoryName) */}
+                <Route path="/category/:categoryName" element={<CategoryPage />} />
+                
                 <Route path="/success" element={<Success />} />
                 <Route path="/shop" element={<ShopPage />} />
                 <Route path="/on-sale" element={<OnSalePage />} />
@@ -73,13 +76,17 @@ function App() {
                 <Route path="/orders" element={<OrderHistoryPage />} />
             </Route>
 
-            {/* === GRUP 2: HALAMAN ADMIN (Pakai Sidebar Khusus) === */}
-            {/* Navbar & Footer TIDAK AKAN MUNCUL di sini karena di luar ShopLayout */}
+            {/* === GRUP 2: HALAMAN ADMIN === */}
             <Route path="/admin" element={<AdminLayout />}>
+                {/* Dashboard Default */}
                 <Route index element={<DashboardPage />} /> 
                 <Route path="dashboard" element={<DashboardPage />} />
-                <Route path="/admin/orders" element={<AdminOrdersPage />} />      
-                <Route path="/admin/customers" element={<AdminCustomersPage />} />
+
+                <Route path="products" element={<AdminProductsPage />} />
+                <Route path="orders" element={<AdminOrdersPage />} />      
+                
+                <Route path="customers" element={<AdminCustomersPage />} />
+                <Route path="add-product" element={<AddProductPage />} />
             </Route>
 
           </Routes>

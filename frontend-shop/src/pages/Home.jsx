@@ -9,182 +9,193 @@ const Home = () => {
     const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const location = useLocation();
 
-  // Handle auto-scroll from other pages (e.g., clicking "New Arrivals" in navbar)
-useEffect(() => {
-    if (location.state && location.state.scrollTo) {
-        const element = document.getElementById(location.state.scrollTo);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-}, [location]);
+    // --- FUNGSI PINTAR: PERBAIKI LINK GAMBAR (Sama seperti halaman lain) ---
+    const getImageUrl = (path) => {
+        if (!path) return 'https://placehold.co/300';
+        if (path.startsWith('http')) return path; 
 
-  // Fetch products from API
-useEffect(() => {
-    axios.get(`${apiUrl}/products`)
-    .then(res => {
-        // Ensure data is an array to prevent errors
-        if (Array.isArray(res.data)) {
-            setProducts(res.data);
+        // Hapus '/api' dari URL dasar untuk mendapatkan URL root backend
+        // Contoh: http://127.0.0.1:8000/api -> http://127.0.0.1:8000
+        const baseUrl = apiUrl.replace('/api', '');
+        
+        // Pastikan path diawali dengan '/'
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+
+        return `${baseUrl}${cleanPath}`;
+    };
+    // ---------------------------------------------------------------------
+
+    // Handle auto-scroll from other pages
+    useEffect(() => {
+        if (location.state && location.state.scrollTo) {
+            const element = document.getElementById(location.state.scrollTo);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, [location]);
+
+    // Fetch products from API
+    useEffect(() => {
+        axios.get(`${apiUrl}/products`)
+        .then(res => {
+            if (Array.isArray(res.data)) {
+                setProducts(res.data);
+            } else {
+                console.error("Data produk bukan array:", res.data);
+                setProducts([]); 
+            }
+        })
+        .catch(err => console.error("Gagal ambil data:", err));
+    }, [apiUrl]);
+
+    // Logic for Toggle Button
+    const handleToggleProducts = () => {
+        if (visibleProducts < products.length) {
+            setVisibleProducts(products.length);
         } else {
-            console.error("Data produk bukan array:", res.data);
-            setProducts([]); 
+            setVisibleProducts(4);
+            document.getElementById('new-arrivals').scrollIntoView({ behavior: 'smooth' });
         }
-    })
-    .catch(err => console.error("Gagal ambil data:", err));
-}, [apiUrl]);
+    };
 
-  // Logic for Toggle Button (View All <-> Show Less)
-const handleToggleProducts = () => {
-    if (visibleProducts < products.length) {
-        // If hidden -> Show All
-        setVisibleProducts(products.length);
-    } else {
-        // If fully shown -> Collapse back to 4
-        setVisibleProducts(4);
-        
-        // Optional: Scroll back to the top of the section
-        document.getElementById('new-arrivals').scrollIntoView({ behavior: 'smooth' });
-    }
-};
-
-return (
-    <div className="pb-20">
-      {/* 1. HERO SECTION */}
-    <header className="bg-[#F2F0F1] pt-10 md:pt-20 px-6 md:px-10 flex flex-col md:flex-row items-center justify-between overflow-hidden">
-        <div className="md:w-1/2 space-y-6 z-10 pb-10">
-        <h1 className="text-4xl md:text-6xl font-black leading-tight font-sans uppercase">
-            Find Clothes<br/>That Matches<br/>Your Style
-        </h1>
-        <p className="text-gray-500 text-sm md:text-lg max-w-md">
-            Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality.
-        </p>
-        <Link 
-            to="/shop" 
-            className="bg-black text-white px-10 md:px-16 py-4 rounded-full text-lg mt-4 hover:bg-gray-800 transition inline-block"
-        >Shop Now
-        </Link>
-        
-        <div className="flex space-x-6 md:space-x-8 mt-8">
-            <div><h3 className="text-2xl font-bold">200+</h3><p className="text-xs text-gray-500">Intl Brands</p></div>
-            <div><h3 className="text-2xl font-bold">2,000+</h3><p className="text-xs text-gray-500">Quality Products</p></div>
-            <div><h3 className="text-2xl font-bold">30,000+</h3><p className="text-xs text-gray-500">Happy Customers</p></div>
-        </div>
-        </div>
-        
-        <div className="md:w-1/2 relative flex justify-center items-end h-full">
-            <img 
-            src="https://i.pinimg.com/736x/18/a6/86/18a6862710797a4e426842e7fa38c1a3.jpg" 
-            alt="Fashion Models" 
-            className="object-cover h-[400px] md:h-[600px] w-full mix-blend-multiply" 
-            />
-        </div>
-    </header>
-
-      {/* 2. BRAND BANNER */}
-    <div className="bg-black py-8 flex flex-wrap justify-center gap-8 md:gap-16 px-4">
-        <span className="text-white text-2xl font-serif">VERSACE</span>
-        <span className="text-white text-2xl font-serif">ZARA</span>
-        <span className="text-white text-2xl font-serif">GUCCI</span>
-        <span className="text-white text-2xl font-serif">PRADA</span>
-        <span className="text-white text-2xl font-serif">Calvin Klein</span>
-    </div>
-
-      {/* 3. NEW ARRIVALS */}
-    <section id="new-arrivals" className="px-6 md:px-10 py-16 text-center">
-        <h2 className="text-3xl md:text-5xl font-black mb-12 uppercase font-sans">New Arrivals</h2>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 transition-all duration-500">
-        {products.length > 0 ? (
-            products.slice(0, visibleProducts).map(product => (
-                <Link to={`/product/${product.slug}`} key={product.id} className="text-left group cursor-pointer">
-                <div className="bg-[#F0EEED] rounded-2xl aspect-square mb-4 overflow-hidden relative">
-                    <img 
-                        src={product.images[0]?.image_url || 'https://placehold.co/300'} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
-                    />
-                </div>
-                <h3 className="font-bold text-lg truncate">{product.name}</h3>
-                <div className="flex items-center space-x-2 text-sm my-1">
-                    <div className="text-yellow-400">
-                        {'★'.repeat(Math.round(product.rating))}
-                        {'☆'.repeat(5 - Math.round(product.rating))}
+    return (
+        <div className="pb-20">
+            {/* 1. HERO SECTION */}
+            <header className="bg-[#F2F0F1] pt-10 md:pt-20 px-6 md:px-10 flex flex-col md:flex-row items-center justify-between overflow-hidden">
+                <div className="md:w-1/2 space-y-6 z-10 pb-10">
+                    <h1 className="text-4xl md:text-6xl font-black leading-tight font-sans uppercase">
+                        Find Clothes<br/>That Matches<br/>Your Style
+                    </h1>
+                    <p className="text-gray-500 text-sm md:text-lg max-w-md">
+                        Browse through our diverse range of meticulously crafted garments, designed to bring out your individuality.
+                    </p>
+                    <Link 
+                        to="/shop" 
+                        className="bg-black text-white px-10 md:px-16 py-4 rounded-full text-lg mt-4 hover:bg-gray-800 transition inline-block"
+                    >Shop Now
+                    </Link>
+                    
+                    <div className="flex space-x-6 md:space-x-8 mt-8">
+                        <div><h3 className="text-2xl font-bold">200+</h3><p className="text-xs text-gray-500">Intl Brands</p></div>
+                        <div><h3 className="text-2xl font-bold">2,000+</h3><p className="text-xs text-gray-500">Quality Products</p></div>
+                        <div><h3 className="text-2xl font-bold">30,000+</h3><p className="text-xs text-gray-500">Happy Customers</p></div>
                     </div>
-                    <span className="text-gray-500">{product.rating}/5</span>
                 </div>
-                <div className="flex items-center space-x-3 mt-1">
-                    <span className="font-bold text-xl">${product.base_price}</span>
-                    {product.discount_percentage > 0 && (
-                        <>
-                            <span className="text-gray-400 line-through font-bold">${(product.base_price * (100 + product.discount_percentage) / 100).toFixed(0)}</span>
-                            <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">-{product.discount_percentage}%</span>
-                        </>
-                    )}
+                
+                <div className="md:w-1/2 relative flex justify-center items-end h-full">
+                    <img 
+                        src="https://i.pinimg.com/736x/18/a6/86/18a6862710797a4e426842e7fa38c1a3.jpg" 
+                        alt="Fashion Models" 
+                        className="object-cover h-[400px] md:h-[600px] w-full mix-blend-multiply" 
+                    />
                 </div>
-                </Link>
-            ))
-        ) : (
-            <p className="text-center col-span-full">Loading Products...</p>
-        )}
-        </div>
+            </header>
 
-        {/* LOGIKA TOMBOL VIEW ALL / SHOW LESS */}
-        {products.length > 4 && (
-            <div className="mt-10">
-                <button 
-                    onClick={handleToggleProducts}
-                    className="border border-gray-300 px-16 py-3 rounded-full font-medium hover:bg-black hover:text-white transition cursor-pointer"
-                >
-                    {visibleProducts < products.length ? 'View All' : 'Show Less'}
-                </button>
+            {/* 2. BRAND BANNER */}
+            <div className="bg-black py-8 flex flex-wrap justify-center gap-8 md:gap-16 px-4">
+                <span className="text-white text-2xl font-serif">VERSACE</span>
+                <span className="text-white text-2xl font-serif">ZARA</span>
+                <span className="text-white text-2xl font-serif">GUCCI</span>
+                <span className="text-white text-2xl font-serif">PRADA</span>
+                <span className="text-white text-2xl font-serif">Calvin Klein</span>
             </div>
-        )}
-    </section>
 
-      {/* 4. BROWSE BY CATEGORY */}
-    <section className="px-6 md:px-10 py-10">
-        <div className="bg-[#F0F0F0] rounded-[40px] px-6 md:px-16 py-10 md:py-16">
-            <h2 className="text-3xl md:text-5xl font-black text-center mb-10 md:mb-16 uppercase font-sans">
-                BROWSE BY CATEGORY
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* MEN */}
-                <Link to="/category/men" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative text-white ">Men</h3>
-                    <img 
-                        src="https://i.pinimg.com/736x/87/65/ea/8765ea6af8697e060ed5fcdb6aa1bb0e.jpg" 
-                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
-                        alt="Pria" 
-                    />
-                </Link>
+            {/* 3. NEW ARRIVALS */}
+            <section id="new-arrivals" className="px-6 md:px-10 py-16 text-center">
+                <h2 className="text-3xl md:text-5xl font-black mb-12 uppercase font-sans">New Arrivals</h2>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 transition-all duration-500">
+                {products.length > 0 ? (
+                    products.slice(0, visibleProducts).map(product => (
+                        <Link to={`/product/${product.slug}`} key={product.id} className="text-left group cursor-pointer">
+                            <div className="bg-[#F0EEED] rounded-2xl aspect-square mb-4 overflow-hidden relative">
+                                {/* PERBAIKAN DISINI: Gunakan getImageUrl */}
+                                <img 
+                                    src={getImageUrl(product.images[0]?.image_url)} 
+                                    alt={product.name} 
+                                    className="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+                                />
+                            </div>
+                            <h3 className="font-bold text-lg truncate">{product.name}</h3>
+                            <div className="flex items-center space-x-2 text-sm my-1">
+                                <div className="text-yellow-400">
+                                    {'★'.repeat(Math.round(product.rating))}
+                                    {'☆'.repeat(5 - Math.round(product.rating))}
+                                </div>
+                                <span className="text-gray-500">{product.rating}/5</span>
+                            </div>
+                            <div className="flex items-center space-x-3 mt-1">
+                                <span className="font-bold text-xl">${product.base_price}</span>
+                                {product.discount_percentage > 0 && (
+                                    <>
+                                        <span className="text-gray-400 line-through font-bold">${(product.base_price * (100 + product.discount_percentage) / 100).toFixed(0)}</span>
+                                        <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">-{product.discount_percentage}%</span>
+                                    </>
+                                )}
+                            </div>
+                        </Link>
+                    ))
+                ) : (
+                    <p className="text-center col-span-full">Loading Products...</p>
+                )}
+                </div>
 
-                {/* WOMEN */}
-                <Link to="/category/women" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative">Women</h3>
-                    <img 
-                        src="https://i.pinimg.com/1200x/cc/e2/fb/cce2fba8f2e5b5d2c954f36ab508ae4e.jpg" 
-                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
-                        alt="Wanita" 
-                    />
-                </Link>
+                {products.length > 4 && (
+                    <div className="mt-10">
+                        <button 
+                            onClick={handleToggleProducts}
+                            className="border border-gray-300 px-16 py-3 rounded-full font-medium hover:bg-black hover:text-white transition cursor-pointer"
+                        >
+                            {visibleProducts < products.length ? 'View All' : 'Show Less'}
+                        </button>
+                    </div>
+                )}
+            </section>
 
-                {/* KIDS */}
-                <Link to="/category/kids" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
-                    <h3 className="text-3xl font-black z-10 relative text-white drop-shadow-md">Kids</h3>
-                    <img 
-                        src="https://i.pinimg.com/1200x/6a/de/05/6ade052ed92399c11969724e539fb854.jpg" 
-                        className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
-                        alt="Anak-anak" 
-                    />
-                </Link>
-            </div>
+            {/* 4. BROWSE BY CATEGORY */}
+            <section className="px-6 md:px-10 py-10">
+                <div className="bg-[#F0F0F0] rounded-[40px] px-6 md:px-16 py-10 md:py-16">
+                    <h2 className="text-3xl md:text-5xl font-black text-center mb-10 md:mb-16 uppercase font-sans">
+                        BROWSE BY CATEGORY
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* MEN */}
+                        <Link to="/category/men" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                            <h3 className="text-3xl font-black z-10 relative text-white ">Men</h3>
+                            <img 
+                                src="https://i.pinimg.com/736x/87/65/ea/8765ea6af8697e060ed5fcdb6aa1bb0e.jpg" 
+                                className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                                alt="Pria" 
+                            />
+                        </Link>
+
+                        {/* WOMEN */}
+                        <Link to="/category/women" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                            <h3 className="text-3xl font-black z-10 relative">Women</h3>
+                            <img 
+                                src="https://i.pinimg.com/1200x/cc/e2/fb/cce2fba8f2e5b5d2c954f36ab508ae4e.jpg" 
+                                className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                                alt="Wanita" 
+                            />
+                        </Link>
+
+                        {/* KIDS */}
+                        <Link to="/category/kids" className="bg-white h-[250px] md:h-[350px] rounded-[20px] p-6 relative overflow-hidden group cursor-pointer">
+                            <h3 className="text-3xl font-black z-10 relative text-white drop-shadow-md">Kids</h3>
+                            <img 
+                                src="https://i.pinimg.com/1200x/6a/de/05/6ade052ed92399c11969724e539fb854.jpg" 
+                                className="absolute right-0 top-0 h-full w-full object-cover group-hover:scale-110 transition duration-500" 
+                                alt="Anak-anak" 
+                            />
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
         </div>
-    </section>
-
-    </div>
-);
+    );
 };
 
 export default Home;

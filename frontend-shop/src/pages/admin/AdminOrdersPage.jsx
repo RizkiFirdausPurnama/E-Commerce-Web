@@ -36,9 +36,24 @@ const AdminOrdersPage = () => {
     );
 };
 
-// Component Terpisah untuk Baris Order (Agar bisa buka-tutup sendiri-sendiri)
+// Component Terpisah untuk Baris Order
 const OrderRow = ({ order }) => {
     const [isOpen, setIsOpen] = useState(false);
+    
+    // --- FUNGSI PINTAR: PERBAIKI LINK GAMBAR (Di Admin juga butuh ini) ---
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    
+    const getImageUrl = (path) => {
+        if (!path) return 'https://placehold.co/300';
+        if (path.startsWith('http')) return path; 
+        
+        // Hapus '/api' untuk dapat root URL (http://127.0.0.1:8000)
+        const baseUrl = apiUrl.replace('/api', '');
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        
+        return `${baseUrl}${cleanPath}`;
+    };
+    // ---------------------------------------------------------------------
 
     return (
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden transition-all">
@@ -87,7 +102,6 @@ const OrderRow = ({ order }) => {
                     
                     <div className="grid grid-cols-1 gap-4">
                         {order.items.map((item, index) => {
-                            // Cek data varian/produk jaga-jaga kalau null (terhapus)
                             const variant = item.product_variant;
                             const product = variant?.product;
 
@@ -95,15 +109,13 @@ const OrderRow = ({ order }) => {
                                 <div key={index} className="flex items-center gap-4 bg-white p-4 rounded-xl border border-gray-200">
                                     {/* Gambar Produk */}
                                     <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                                        {product?.images?.[0]?.image_url ? (
-                                            <img 
-                                                src={product.images[0].image_url} 
-                                                alt={product.name}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">No Img</div>
-                                        )}
+                                        {/* GUNAKAN getImageUrl DISINI */}
+                                        <img 
+                                            src={getImageUrl(product?.images?.[0]?.image_url)} 
+                                            alt={product?.name || "Product"}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { e.target.src = 'https://placehold.co/300?text=No+Img'; }}
+                                        />
                                     </div>
 
                                     {/* Info Produk */}
@@ -128,7 +140,6 @@ const OrderRow = ({ order }) => {
                         })}
                     </div>
 
-                    {/* Alamat Pengiriman (Opsional jika ada di DB) */}
                     <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between items-center text-sm text-gray-500">
                         <span>Shipping Address: Default Address</span>
                         <span className="font-bold text-black">Total Paid: ${parseInt(order.total_price).toLocaleString()}</span>

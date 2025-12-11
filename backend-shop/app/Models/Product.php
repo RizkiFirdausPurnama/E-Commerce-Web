@@ -12,7 +12,7 @@ class Product extends Model
     // Relasi ke Category
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     // Relasi ke Varian (Size/Warna)
