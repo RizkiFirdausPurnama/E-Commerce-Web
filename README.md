@@ -1,9 +1,9 @@
 # SHOP.CO - Modern Fullstack E-Commerce
 
-**SHOP.CO** adalah aplikasi web E-Commerce responsif yang dibangun menggunakan arsitektur *Headless* (Frontend dan Backend terpisah). Project ini mengimplementasikan fitur belanja lengkap mulai dari katalog produk, varian warna/ukuran, keranjang belanja (cart), hingga sistem autentikasi pengguna.
+**SHOP.CO** adalah aplikasi web E-Commerce responsif yang dibangun menggunakan arsitektur *Headless* (Frontend dan Backend terpisah). Project ini mengimplementasikan pengalaman belanja lengkap bagi user serta sistem manajemen inventaris (CMS) yang kuat bagi Admin.
 
 #### 📸 Tampilan
-<img src=Document\shop.co.png>
+<img src="Document/shop.co.png" alt="Tampilan Shop.co">
 
 ---
 
@@ -11,16 +11,17 @@
 
 **Frontend:**
 * **React.js** (Vite) - UI Library
-* **Tailwind CSS (v4)** - Styling Framework
+* **Tailwind CSS** - Styling Framework
 * **Axios** - HTTP Client untuk API
 * **React Router DOM** - Navigasi Halaman
-* **React Hot Toast**: Notifikasi pop-up yang estetik.
+* **React Hot Toast**: Notifikasi pop-up interaktif.
 * **React Icons** - Ikon Antarmuka
 
 **Backend:**
-* **Laravel 11** - PHP Framework (REST API)
+* **Laravel 10** - PHP Framework (REST API)
 * **MySQL** - Database Management
 * **Laravel Sanctum** - API Authentication (Token Based)
+* **Laravel Storage** - Manajemen File & Gambar
 
 **Deployment:**
 * **Frontend:** Vercel
@@ -30,37 +31,43 @@
 
 ## ✨ Fitur Utama
 
+### 👤 Fitur Pengguna (Customer)
 1.  **Homepage Interaktif:**
     * Hero Banner & Brand List.
-    * **New Arrivals:** Menampilkan produk terbaru dengan fitur *Toggle View All* (Expand/Collapse).
-    * **Browse by Category:** Navigasi cepat ke kategori Pria, Wanita, dan Anak-anak.
-2.  **Detail Produk Dinamis:**
+    * **New Arrivals:** Menampilkan produk terbaru dengan toggle *View All*.
+    * **Live Search:** Pencarian produk *real-time* di navbar dengan *dropdown suggestion*.
+2.  **Detail Produk Lengkap:**
     * Galeri foto produk.
-    * Pemilihan Varian (Warna & Ukuran) dengan validasi stok.
-    * Harga coret (Diskon) otomatis.
-3.  **User Authentication:**
-    * **Register & Login:** Sistem akun pengguna aman menggunakan token.
-    * **Proteksi:** User harus login untuk menambah barang ke keranjang.
-4.  **Shopping Cart (Keranjang):**
-    * Tambah/Kurang kuantitas barang.
-    * Hapus barang dari keranjang.
-    * Kalkulasi Subtotal & Total otomatis.
-5.  **Checkout System:**
-    * Pembuatan Order ID unik (Generate Resi).
-    * Simpan riwayat pemesanan ke database.
-6.  **Live Search:**
-    * Pencarian produk *real-time* dengan *dropdown suggestion* (teknik Debounce).
+    * **Custom Variants:** Pilihan warna visual (Hex Code) dan kategori ukuran (Tops/Bottoms/Kids).
+    * Validasi stok dan pemilihan varian sebelum masuk keranjang.
+3.  **Shopping Cart & Checkout:**
+    * Manajemen keranjang (Update Qty/Hapus).
+    * Kalkulasi Subtotal otomatis.
+    * Simulasi Checkout dan pembuatan Order ID.
+4.  **User Dashboard:**
+    * **Riwayat Pesanan:** Melihat status pesanan (Paid/Pending) dan detail barang yang dibeli.
+
+### 🛡️ Fitur Admin (Dashboard)
+1.  **Dashboard Statistik:**
+    * Visualisasi Total Pendapatan, Total Order, Total Produk, dan User Aktif.
+2.  **Manajemen Produk (CRUD):**
+    * **Create:** Upload gambar, set harga, deskripsi, dan input varian warna (RGB/Hex) serta multi-size.
+    * **Read:** Tabel daftar produk dengan fitur pencarian dan pagination.
+    * **Update:** Edit detail produk, ganti gambar, dan update varian.
+    * **Delete:** Hapus produk dari katalog.
+3.  **Manajemen Order:**
+    * Melihat daftar pesanan masuk dari customer.
+
+---
 
 ## 🚀 Cara Menjalankan Proyek Secara Lokal
 
 Proyek ini terdiri dari dua bagian (backend dan frontend) yang harus dijalankan **secara bersamaan** di dua terminal terpisah.
 
 **Prasyarat:**
-* **XAMPP:** Pastikan **MySQL** dan **Apache** sudah berjalan (Warna Hijau).
+* **XAMPP:** Pastikan **MySQL** dan **Apache** sudah berjalan.
 * **Composer:** Manajer paket PHP.
 * **Node.js & NPM:** Runtime JavaScript.
-
----
 
 ### 1. Backend (Laravel API)
 
@@ -76,67 +83,65 @@ Proyek ini terdiri dari dua bagian (backend dan frontend) yang harus dijalankan 
     ```bash
     cp .env.example .env
     ```
-4.  Buka file `.env` di text editor dan sesuaikan pengaturan database (pastikan database `shop_co` sudah dibuat di phpMyAdmin):
+4.  Buka file `.env` dan sesuaikan pengaturan database:
     ```env
     DB_CONNECTION=mysql
     DB_HOST=127.0.0.1
     DB_PORT=3306
-    DB_DATABASE=shop_co
+    DB_DATABASE=shop_co  # Pastikan database ini sudah dibuat
     DB_USERNAME=root
     DB_PASSWORD=
     ```
-5.  Generate Application Key:
+5.  Generate Application Key & Migrasi Database:
     ```bash
     php artisan key:generate
-    ```
-6.  Migrasi database dan isi data dummy (Seeding):
-    ```bash
     php artisan migrate:fresh --seed
     ```
-7.  Jalankan server backend (biarkan terminal ini terbuka):
+6.  **PENTING:** Buat shortcut untuk gambar produk:
+    ```bash
+    php artisan storage:link
+    ```
+7.  Jalankan server backend:
     ```bash
     php artisan serve
     ```
-> 🖥️ **Backend Anda sekarang berjalan di `http://127.0.0.1:8000`**
-
----
+> 🖥️ **Backend berjalan di `http://127.0.0.1:8000`**
 
 ### 2. Frontend (React App)
 
-1.  Buka **terminal BARU** (jangan tutup terminal backend).
-2.  Masuk ke folder frontend:
+1.  Buka **terminal BARU**. Masuk ke folder frontend:
     ```bash
     cd frontend-shop
     ```
-3.  Install dependensi JavaScript:
+2.  Install dependensi JavaScript:
     ```bash
     npm install
     ```
-4.  Buat file `.env` baru di dalam folder `frontend-shop`, lalu isi dengan konfigurasi berikut agar terhubung ke backend lokal:
+3.  Buat file `.env` di folder `frontend-shop`, isi konfigurasi:
     ```env
     VITE_API_BASE_URL=[http://127.0.0.1:8000/api](http://127.0.0.1:8000/api)
     ```
-5.  Jalankan server frontend (biarkan terminal ini terbuka):
+4.  Jalankan server frontend:
     ```bash
     npm run dev
     ```
-> 🚀 **Frontend Anda sekarang berjalan di `http://localhost:5173`**
+> 🚀 **Frontend berjalan di `http://localhost:5173`**
 
 ---
 
-### 3. Selesai!
+## 🌍 Konfigurasi Deployment (Railway)
 
-Buka URL frontend (`http://localhost:5173`) di browser Anda. Anda sekarang dapat mencoba mendaftar akun, login, dan mulai berbelanja.
+Agar fitur upload gambar dan database berjalan lancar di Railway, perhatikan konfigurasi berikut pada service Laravel:
+
+1.  **Root Directory:** `/backend-shop`
+2.  **Start Command:**
+    ```bash
+    php artisan storage:link && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT
+    ```
+3.  **Volumes (Wajib untuk Gambar):**
+    * Mount Path: `/app/storage/app/public`
 
 ---
-
-## 🌍 Deployment
-
-Proyek ini dirancang untuk di-deploy dengan konfigurasi berikut:
-
-* **Backend:** Di-host menggunakan **Railway** (MySQL + Laravel).
-* **Frontend:** Di-host menggunakan **Vercel**.
-* **Environment Variable:** Pastikan mengganti `VITE_API_BASE_URL` di Vercel menjadi URL domain Railway Anda (https).
 
 ## 👤 Penulis
 
