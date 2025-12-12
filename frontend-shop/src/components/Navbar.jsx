@@ -13,15 +13,27 @@ const Navbar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   
   // --- STATE SEARCH ---
-  const [showMobileSearch, setShowMobileSearch] = useState(false); // Untuk toggle search di HP
+  const [showMobileSearch, setShowMobileSearch] = useState(false); 
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]); 
-  const [showSuggestions, setShowSuggestions] = useState(false); // Untuk dropdown desktop
+  const [showSuggestions, setShowSuggestions] = useState(false); 
   
   const navigate = useNavigate();
   const location = useLocation();
   const apiUrl = import.meta.env.VITE_API_BASE_URL;
   const searchRef = useRef(null); 
+
+  // --- FUNGSI PINTAR: PERBAIKI LINK GAMBAR (TAMBAHAN BARU) ---
+  const getImageUrl = (path) => {
+      if (!path) return 'https://placehold.co/300';
+      if (path.startsWith('http')) return path; 
+      
+      const baseUrl = apiUrl.replace('/api', '');
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+      
+      return `${baseUrl}${cleanPath}`;
+  };
+  // -----------------------------------------------------------
 
   // --- LOGIKA LIVE SEARCH (DEBOUNCE) ---
   useEffect(() => {
@@ -36,6 +48,7 @@ const Navbar = () => {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
+  
 
   const fetchSuggestions = async (query) => {
     try {
@@ -65,7 +78,7 @@ const Navbar = () => {
         if(searchTerm.trim()) {
             navigate(`/shop?search=${searchTerm}`);
             setShowSuggestions(false);
-            setShowMobileSearch(false); // Tutup juga di mobile
+            setShowMobileSearch(false); 
         }
     }
   };
@@ -135,7 +148,12 @@ const Navbar = () => {
                             onClick={() => { setShowSuggestions(false); setSearchTerm(''); }}
                             className="flex items-center gap-4 px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer group"
                         >
-                            <img src={product.images[0]?.image_url} alt={product.name} className="w-10 h-10 rounded-md object-cover bg-gray-200" />
+                            {/* GUNAKAN getImageUrl DISINI */}
+                            <img 
+                                src={getImageUrl(product.images[0]?.image_url)} 
+                                alt={product.name} 
+                                className="w-10 h-10 rounded-md object-cover bg-gray-200" 
+                            />
                             <div className="flex-1">
                                 <h4 className="text-sm font-bold text-gray-800 group-hover:text-black">{product.name}</h4>
                                 <p className="text-xs text-gray-500">${product.base_price}</p>
@@ -151,7 +169,7 @@ const Navbar = () => {
         {/* KANAN: Icons Mobile & Desktop */}
         <div className="flex items-center space-x-4">
           
-          {/* 1. IKON SEARCH MOBILE (Hanya muncul di Mobile) */}
+          {/* 1. IKON SEARCH MOBILE */}
           <FiSearch 
             className="md:hidden text-2xl cursor-pointer hover:text-gray-600" 
             onClick={() => setShowMobileSearch(!showMobileSearch)} 
@@ -225,7 +243,12 @@ const Navbar = () => {
                             }}
                             className="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0 active:bg-gray-50"
                         >
-                            <img src={product.images[0]?.image_url} alt={product.name} className="w-12 h-12 rounded object-cover bg-gray-100" />
+                            {/* GUNAKAN getImageUrl DISINI JUGA */}
+                            <img 
+                                src={getImageUrl(product.images[0]?.image_url)} 
+                                alt={product.name} 
+                                className="w-12 h-12 rounded object-cover bg-gray-100" 
+                            />
                             <div>
                                 <h4 className="text-sm font-bold text-gray-800 line-clamp-1">{product.name}</h4>
                                 <p className="text-xs text-gray-500">${product.base_price}</p>
@@ -246,7 +269,7 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* === MOBILE MENU SIDEBAR (Garis Tiga) === */}
+      {/* === MOBILE MENU SIDEBAR === */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 flex">
             <div className="fixed inset-0 bg-black/50" onClick={() => setIsMenuOpen(false)}></div>
