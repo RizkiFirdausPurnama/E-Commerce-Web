@@ -57,4 +57,6 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/orders', [AdminController::class, 'getAllOrders']);
     Route::get('/customers', [AdminController::class, 'getAllCustomers']);
     Route::post('/products', [AdminController::class, 'addProduct']);
+    Route::put('/products/{id}', [AdminController::class, 'updateProduct']);
+    Route::delete('/products/{id}', [AdminController::class, 'deleteProduct']);
 });

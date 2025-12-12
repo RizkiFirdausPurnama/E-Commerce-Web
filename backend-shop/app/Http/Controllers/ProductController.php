@@ -41,12 +41,18 @@ class ProductController extends Controller
     }
 
     // 2. Mengambil detail 1 produk
-    public function show($slug)
+    public function show($key)
     {
-        // UBAH 3: Load relasi category juga disini
-        $product = Product::with(['images', 'variants', 'category'])
-                        ->where('slug', $slug)
-                        ->firstOrFail();
+        $query = Product::with(['images', 'variants', 'category']);
+
+        // LOGIC BARU: Cek apakah $key adalah angka (ID) atau string (Slug)
+        if (is_numeric($key)) {
+            // Jika angka, cari berdasarkan ID (Dipakai oleh Admin Edit Page)
+            $product = $query->where('id', $key)->firstOrFail();
+        } else {
+            // Jika text, cari berdasarkan Slug (Dipakai oleh User Detail Page)
+            $product = $query->where('slug', $key)->firstOrFail();
+        }
                         
         return response()->json($product);
     }

@@ -25,6 +25,7 @@ import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminCustomersPage from './pages/admin/AdminCustomersPage';
 import AddProductPage from './pages/admin/AddProductPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
+import EditProductPage from './pages/admin/EditProductPage'
 
 // Context & Utils
 import { CartProvider } from './context/CartContext';
@@ -87,6 +88,7 @@ function App() {
                 
                 <Route path="customers" element={<AdminCustomersPage />} />
                 <Route path="add-product" element={<AddProductPage />} />
+                <Route path="products/edit/:id" element={<EditProductPage />} />
             </Route>
 
           </Routes>
